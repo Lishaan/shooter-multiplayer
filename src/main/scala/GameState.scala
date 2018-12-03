@@ -1,6 +1,6 @@
 import scala.collection.mutable.ArrayBuffer
 
-class GameState {
+class GameState extends Serializable {
     var intersectedPlayerIDs: ArrayBuffer[(String, String)] = ArrayBuffer[(String, String)]()
     var players: ArrayBuffer[Player] = new ArrayBuffer[Player]()
 

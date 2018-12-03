@@ -16,7 +16,7 @@ abstract class Ammo extends Drawable with Moveable {
  *  @param playerPos the initial position of the bullet
  */
 class Bullet (playerPos: Position) extends Ammo {
-	val _position: Position = new Position(playerPos.x, playerPos.y - (Global.size("Player")/2))
+	val _position: Position = new Position(playerPos.x, playerPos.y, playerPos.r)
 	var _speed: Double = Global.speed("Bullet")
     var _rotationSpeed: Double = 0
 	var _size: Double  = Global.size("Bullet")
@@ -25,7 +25,7 @@ class Bullet (playerPos: Position) extends Ammo {
 	def move = { 
 		speed = Global.speed("Bullet")
 		size = Global.size("Bullet")
-		position.moveUp(speed) 
+		position.moveAtAngle(speed, position.r)
 	}
 
 	def draw(drawer: GraphicsContext): Unit = {

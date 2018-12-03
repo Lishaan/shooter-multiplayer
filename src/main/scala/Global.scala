@@ -26,20 +26,35 @@ case class Health (max: Double) {
 	def percentage: Double = current / max
 }
 
-/** A Position object that stores the (x, y) coordinates of a Moveable entity.
+/** A Position object that stores the (x, y) coordinates and rotation of a Moveable entity.
  *
  *  @constructor create a new instance of a Position object
  *  @param x the initial x coordinate
  *  @param y the initial y coordinate
+ *  @param r the initial rotation angle
  */
-case class Position (var x: Double, var y: Double) {
-    var r: Double = 0 // angle in theta
-	def rotateRight (speed: Double): Unit = { r = r + speed * Global.delta }
-	def rotateLeft  (speed: Double): Unit = { r = r - speed * Global.delta }
-	def moveUp      (speed: Double): Unit = { y = y - speed * Global.delta }
-	def moveRight   (speed: Double): Unit = { x = x + speed * Global.delta }
-	def moveDown    (speed: Double): Unit = { y = y + speed * Global.delta }
-	def moveLeft    (speed: Double): Unit = { x = x - speed * Global.delta }
+case class Position (var x: Double, var y: Double, var r: Double = 0) {
+	def rotateRight (speed: Double): Unit = { r += speed * Global.delta }
+	def rotateLeft  (speed: Double): Unit = { r -= speed * Global.delta }
+	def moveForward(speed: Double) = {
+		x += speed * Math.cos(r) * Global.delta
+		y += speed * Math.sin(r) * Global.delta
+	}
+
+	def moveBackward(speed: Double) = {
+		x -= speed * Math.cos(r) * Global.delta
+		y -= speed * Math.sin(r) * Global.delta
+	}
+
+	def moveAtAngle (speed: Double, angle: Double) = {
+		x += speed * Math.cos(angle) * Global.delta
+		y += speed * Math.sin(angle) * Global.delta
+	}
+
+	def moveUp    (speed: Double): Unit = { y -= speed * Global.delta }
+	def moveRight (speed: Double): Unit = { x += speed * Global.delta }
+	def moveDown  (speed: Double): Unit = { y += speed * Global.delta }
+	def moveLeft  (speed: Double): Unit = { x -= speed * Global.delta }
 }
 
 /** A Velocity object that stores the speed of a Moveable entity in a given direction by the (x, y) coordinates.
@@ -126,7 +141,7 @@ object Global {
 	/** The intiial speeds of the Moveable entities in the game */
 	val SPEED: MMap[String, Double] = MMap (
 		"Player"         -> 170,
-		"Bullet"         -> 400,
+		"Bullet"         -> 500,
 		"Seeker"         -> 80,
 		"Bouncer"        -> 120,
 		"Shooter"        -> 70,

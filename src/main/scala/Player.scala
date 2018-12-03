@@ -11,20 +11,15 @@ object Player {
  *  @constructor create a new instance of a Player object by the given player name
  *  @param playerName the name of the Player
  */
-class Player (playerName: String) extends Drawable with Moveable with Shootable {
-	/** create a new instance of a Player object with the name "Player" */
-    def this() = this("Player")
-
-    val ID: String = Player.generateID()
-
-    private val _name: String = playerName
+class Player (private val _name: String = "Player") extends Drawable with Moveable with Shootable {
+    private val _ID: String = Player.generateID()
 	private var _kills: Int = 0
 
-	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight-50)
+	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
 	var _size: Double = Global.size("Player")
 	val _color: Color = Global.color("Player")
 	var _speed: Double = Global.speed("Player")
-    var _rotationSpeed: Double = 0
+    var _rotationSpeed: Double = 3 // (pi/360)
 
 	def shootBullet: Unit = {
 		_bullets +:= new Bullet(this.position)
@@ -39,27 +34,46 @@ class Player (playerName: String) extends Drawable with Moveable with Shootable 
 		speed = Global.speed("Player")
 		size = Global.size("Player")
 
-		if (direction.equals("Up") && (position.y-size > 0)) {
-			position.moveUp(speed)
-		} else if (direction.equals("Right") && (position.x+size < Global.gameWidth)) {
-			position.moveRight(speed)
-		} else if (direction.equals("Down") && (position.y+size < Global.gameHeight)) {
-			position.moveDown(speed)
-		} else if (direction.equals("Left") && (position.x-size > 0)) {
-			position.moveLeft(speed)
+		// TODO: Bounds
+		// val outOfBounds: Boolean = (
+		// 	((position.x+size < Global.gameWidth) && (position.y+size < Global.gameHeight))
+		// 	||
+		// 	((position.y-size > 0) && (position.x-size > 0))
+		// )
+
+		// println(outOfBounds)
+
+		// // Normalized Angle from -90 to 90
+		// val na: Double = (Math.sin(position.r) * 90)
+
+		direction match {
+			case "Forward"  => position.moveForward(speed)
+			case "Backward" => position.moveBackward(speed)
+			case _ =>
 		}
 	}
 
-    // TODO
-    def rotateLeft: Unit = Unit
-    def rotateRight: Unit = Unit
+    def rotateLeft: Unit  = position.rotateLeft(rotationSpeed)
+    def rotateRight: Unit = position.rotateRight(rotationSpeed)
 
 	def draw(drawer: GraphicsContext): Unit = {
 		// Draws at center
 		drawer.fill = color
 		drawer.fillOval(position.x-size, position.y-size, size*2, size*2)
+
+		// Draw gun
+		val x = position.x - (size/4)
+		val y = position.y - (size/4)
+		val r = position.r
+
+		val gun_x: Double = x + ((size) * Math.cos(r))
+		val gun_y: Double = y + ((size) * Math.sin(r))
+
+		drawer.fill = Color.web("ff0000")
+		drawer.fillOval(gun_x, gun_y, size/2, size/2)
 	}
 
+	def ID = _ID
 	def name = _name
 	def kills = _kills
 

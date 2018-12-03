@@ -91,8 +91,8 @@ class Game extends PrimaryStage {
 				drawer.fill = Global.color("Background")
 				drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
 
-				player.draw(drawer)
 				player.bullets.foreach(b => b.draw(drawer))
+				player.draw(drawer)
 				// enemies.foreach(e => e.draw(drawer))
 
 				// Enemies
@@ -144,11 +144,14 @@ class Game extends PrimaryStage {
 				// }
 				
 				// Player move
-				if (keys("Up"   )) player.move("Up"   )
-				if (keys("Right")) player.move("Right")
-				if (keys("Down" )) player.move("Down" )
-				if (keys("Left" )) player.move("Left" )
+				if (keys( "Up" )) player.move("Forward")
+				if (keys("Down")) player.move("Backward")
 
+				// Player rotate
+				if (keys("Right")) player.rotateRight
+				if (keys("Left" )) player.rotateLeft
+
+				// println((player.position.r).toString)
 
 				// Game speed configuration
 				// if (Global.appendToHighscoresFile || (Global.gameScale==1.2 && Global.gameSpeed==1.0)) {					

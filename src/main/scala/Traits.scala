@@ -29,7 +29,7 @@ trait Shootable {
 			}
 
 			// Remove all bullets that is out of the game scene
-			indexes.foreach(index => bullets.remove(index))
+			indexes.foreach(index => if (bullets.length <= index) bullets.remove(index))
 		}
 	}
 
