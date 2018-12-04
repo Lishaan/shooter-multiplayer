@@ -25,7 +25,7 @@ class Bullet (playerPos: Position) extends Ammo {
 	def move = { 
 		speed = Global.speed("Bullet")
 		size = Global.size("Bullet")
-		position.moveAtAngle(speed, position.r)
+		position.moveForward(speed)
 	}
 
 	def draw(drawer: GraphicsContext): Unit = {
@@ -43,27 +43,27 @@ class Bullet (playerPos: Position) extends Ammo {
  *  @constructor create a new bullet with a position
  *  @param startPos the initial position of the bullet
  */
-class ShooterBullet (startPos: Position) extends Ammo {
-	val _position: Position = new Position(startPos.x, startPos.y + (Global.size("Shooter")/2))
-	var _speed: Double = Global.speed("ShooterBullet")
-    var _rotationSpeed: Double = ???
-	var _size: Double  = Global.size("ShooterBullet")
-	val _color: Color = Global.color("ShooterBullet")
+// class ShooterBullet (startPos: Position) extends Ammo {
+// 	val _position: Position = new Position(startPos.x, startPos.y + (Global.size("Shooter")/2))
+// 	var _speed: Double = Global.speed("ShooterBullet")
+//     var _rotationSpeed: Double = ???
+// 	var _size: Double  = Global.size("ShooterBullet")
+// 	val _color: Color = Global.color("ShooterBullet")
 
-	def move = { 
-		speed = Global.speed("ShooterBullet")
-		size = Global.size("ShooterBullet")
-		// position.moveDown(speed) 
+// 	def move = { 
+// 		speed = Global.speed("ShooterBullet")
+// 		size = Global.size("ShooterBullet")
+// 		// position.moveDown(speed) 
 
-        // x = x + rcosϕ
-	}
+//         // x = x + rcosϕ
+// 	}
 
-    def rotateLeft: Unit = ???
-    def rotateRight: Unit = ???
+//     def rotateLeft: Unit = ???
+//     def rotateRight: Unit = ???
 
-	def draw(drawer: GraphicsContext): Unit = {
-		// Draws at center
-		drawer.fill = color
-		drawer.fillOval(position.x-size, position.y-size, size*2, size*2)
-	}
-}
+// 	def draw(drawer: GraphicsContext): Unit = {
+// 		// Draws at center
+// 		drawer.fill = color
+// 		drawer.fillOval(position.x-size, position.y-size, size*2, size*2)
+// 	}
+// }

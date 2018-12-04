@@ -11,19 +11,18 @@ object Player {
  *  @constructor create a new instance of a Player object by the given player name
  *  @param playerName the name of the Player
  */
-class Player (private val _name: String = "Player") extends Drawable with Moveable with Shootable {
+class Player (private val _name: String = "Player") extends Drawable with Moveable with Shootable with Damageable {
     private val _ID: String = Player.generateID()
 	private var _kills: Int = 0
 
 	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
+	val _health: Health = new Health(100)
 	var _size: Double = Global.size("Player")
 	val _color: Color = Global.color("Player")
 	var _speed: Double = Global.speed("Player")
-    var _rotationSpeed: Double = 3 // (pi/360)
+    var _rotationSpeed: Double = 4
 
-	def shootBullet: Unit = {
-		_bullets +:= new Bullet(this.position)
-	}
+	def shootBullet: Unit = (_bullets +:= new Bullet(this.position))
 
 	def move = println("Error: Parameter (direction: String) required")
 
@@ -57,6 +56,16 @@ class Player (private val _name: String = "Player") extends Drawable with Moveab
     def rotateRight: Unit = position.rotateRight(rotationSpeed)
 
 	def draw(drawer: GraphicsContext): Unit = {
+		// Draw health bar
+		drawer.fill = Color.Blue
+		drawer.fillRect(position.x-size, position.y+size+(size/2), size*2, size/4)
+
+		drawer.fill = Color.Red
+		drawer.fillRect(position.x-size, position.y+size+(size/2), (size*2)*health.percentage, size/4)
+
+		// Draw bullets
+		bullets.foreach(_.draw(drawer))
+
 		// Draws at center
 		drawer.fill = color
 		drawer.fillOval(position.x-size, position.y-size, size*2, size*2)

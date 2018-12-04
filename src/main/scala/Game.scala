@@ -12,17 +12,14 @@ import scalafx.event.ActionEvent
 import scalafx.animation.AnimationTimer
 
 object Game {
-	val name: String = "Spherical Insanity"
+	val name: String = "Shooter Multiplayer"
 
-	private val highscoresFilePath: String = System.getProperty("java.io.tmpdir") + "/highscores.txt"
+	// private val highscoresFilePath: String = System.getProperty("java.io.tmpdir") + "/highscores.txt"
 
-	val highscoresDir: String = System.getProperty("java.io.tmpdir") + "/"
+	// val highscoresDir: String = System.getProperty("java.io.tmpdir") + "/"
 
 	/** Determines whether the current game has ended. */
 	var ended: Boolean = false
-
-	/** Toggles the pausing of the game. */
-	// def togglePause: Unit = { Game.paused = !Game.paused }
 }
 
 /** A stage where a game is played on the scene until the game ends.
@@ -91,7 +88,6 @@ class Game extends PrimaryStage {
 				drawer.fill = Global.color("Background")
 				drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
 
-				player.bullets.foreach(b => b.draw(drawer))
 				player.draw(drawer)
 				// enemies.foreach(e => e.draw(drawer))
 

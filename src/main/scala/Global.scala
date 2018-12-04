@@ -36,20 +36,9 @@ case class Health (max: Double) {
 case class Position (var x: Double, var y: Double, var r: Double = 0) {
 	def rotateRight (speed: Double): Unit = { r += speed * Global.delta }
 	def rotateLeft  (speed: Double): Unit = { r -= speed * Global.delta }
-	def moveForward(speed: Double) = {
-		x += speed * Math.cos(r) * Global.delta
-		y += speed * Math.sin(r) * Global.delta
-	}
-
-	def moveBackward(speed: Double) = {
-		x -= speed * Math.cos(r) * Global.delta
-		y -= speed * Math.sin(r) * Global.delta
-	}
-
-	def moveAtAngle (speed: Double, angle: Double) = {
-		x += speed * Math.cos(angle) * Global.delta
-		y += speed * Math.sin(angle) * Global.delta
-	}
+	
+	def moveForward(speed: Double) = { x += speed * Math.cos(r) * Global.delta; y += speed * Math.sin(r) * Global.delta }
+	def moveBackward(speed: Double) = { x -= speed * Math.cos(r) * Global.delta; y -= speed * Math.sin(r) * Global.delta }
 
 	def moveUp    (speed: Double): Unit = { y -= speed * Global.delta }
 	def moveRight (speed: Double): Unit = { x += speed * Global.delta }
