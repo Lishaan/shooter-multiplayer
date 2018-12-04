@@ -4,19 +4,12 @@ import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.stage.Stage
 import scalafx.scene.Scene
-import scalafx.scene.text.Text
-import scalafx.scene.paint.Color
 import scalafx.scene.input.{KeyEvent, KeyCode}
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
-import scalafx.event.ActionEvent
 import scalafx.animation.AnimationTimer
 
 object Game {
 	val name: String = "Shooter Multiplayer"
-
-	// private val highscoresFilePath: String = System.getProperty("java.io.tmpdir") + "/highscores.txt"
-
-	// val highscoresDir: String = System.getProperty("java.io.tmpdir") + "/"
 
 	/** Determines whether the current game has ended. */
 	var ended: Boolean = false
@@ -27,7 +20,7 @@ object Game {
  *  @param playerName the name of the current game's player
  */
 class Game extends PrimaryStage {
-	var state: GameState = new GameState()
+	private var state: GameState = new GameState()
 	private val player = new Player("Player")
 
 	title = s"${Game.name} - Play"
@@ -35,18 +28,6 @@ class Game extends PrimaryStage {
 
 	scene = new Scene(Global.gameWidth, Global.gameHeight) {
 		Game.ended = false
-
-		// val spawners: ArrayBuffer[Spawner] = ArrayBuffer (
-		// 	new Spawner("Bouncer", 12),
-		// 	new Spawner("Seeker" , 2.5, 5.0),
-		// 	new Spawner("Shooter", 30.0, 40.0)
-		// )
-
-		// var enemies: ArrayBuffer[Enemy] = ArrayBuffer()
-		
-		// var timerText = new Text(10, 20, "Score: 0.0") {
-		// 	fill = Global.color("TimerText")
-		// }
 
 		var keys = Map (
 			"Up"     -> false,
@@ -63,7 +44,6 @@ class Game extends PrimaryStage {
 		val canvas: Canvas = new Canvas(Global.gameWidth, Global.gameHeight);
 		val drawer: GraphicsContext = canvas.graphicsContext2D
 
-		// var didAppend: Boolean = false
 		var playerIsDead: Boolean = false
 
 		val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
@@ -75,69 +55,10 @@ class Game extends PrimaryStage {
 				Global.playerPos = player.position
 				Global.delta = delta
 
-				// Enemies Spawn
-				// spawners.foreach(delay => {
-				// 	delay.update
-				// 	if (delay.stopped) {
-				// 		enemies +:= Enemy.spawn(delay.enemyName)
-				// 		delay.reset
-				// 	}
-				// })
-
 				// Drawings
 				drawer.fill = Global.color("Background")
 				drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
-
 				player.draw(drawer)
-				// enemies.foreach(e => e.draw(drawer))
-
-				// Enemies
-				// if (!enemies.isEmpty) {
-				// 	var indexes: ArrayBuffer[Int] = ArrayBuffer()
-				// 	for (i <- 0 until enemies.length) {
-						
-				// 		// Player death from intersecting with enemies
-				// 		playerIsDead = intersected(enemies(i), player)
-
-				// 		// Player death from Shooter's bullets
-				// 		if (enemies(i).isInstanceOf[Shooter]) {
-				// 			enemies(i).asInstanceOf[Shooter].shootBullet
-				// 			enemies(i).asInstanceOf[Shooter].updateBullets
-				// 			enemies(i).asInstanceOf[Shooter].bullets.foreach(bullet => {
-				// 				playerIsDead = intersected(player, bullet)
-				// 			})
-				// 		}
-
-				// 		// Player death
-				// 		if (playerIsDead) {
-
-				// 			// Highscores
-				// 			if (Global.appendToHighscoresFile)
-				// 				didAppend = Highscores.append(new Score(player.name, player.kills, seconds))
-
-				// 			Game.ended = true
-				// 			timer.stop
-				// 		}
-
-				// 		// Enemy death from Player's bullets
-				// 		player.bullets.foreach(bullet => {
-				// 			if (intersected(bullet, enemies(i))) {
-				// 				enemies(i).inflictDamage(bullet.damage)
-				// 				bullet.remove
-								
-				// 				if (enemies(i).dead) {
-				// 					enemies(i).remove
-				// 					player.incrementKills
-				// 					if (!indexes.contains(i)) indexes += i
-				// 				}
-				// 			}
-				// 		})
-
-				// 		// Enemies move
-				// 		enemies(i).move
-				// 	}
-				// 	indexes.foreach(index => enemies.remove(index))
-				// }
 				
 				// Player move
 				if (keys( "Up" )) player.move("Forward")
@@ -149,31 +70,14 @@ class Game extends PrimaryStage {
 
 				// println((player.position.r).toString)
 
-				// Game speed configuration
-				// if (Global.appendToHighscoresFile || (Global.gameScale==1.2 && Global.gameSpeed==1.0)) {					
-				// 	if (seconds >= 10 ) Global.gameSpeed = 1.1
-				// 	if (seconds >= 40 ) Global.gameSpeed = 1.2
-				// 	if (seconds >= 70 ) Global.gameSpeed = 1.3
-				// 	if (seconds >= 110) Global.gameSpeed = 1.4
-				// 	if (seconds >= 160) Global.gameSpeed = 1.5
-				// 	if (seconds >= 220) Global.gameSpeed = 1.6
-				// 	if (seconds >= 290) Global.gameSpeed = 1.7
-				// 	if (seconds >= 360) Global.gameSpeed = 1.8
-				// 	if (seconds >= 450) Global.gameSpeed = 1.9
-				// 	if (seconds >= 550) Global.gameSpeed = 2.0
-				// }
-
 				seconds += delta
 				Global.seconds = seconds
-				// gameState.update(player)
+				// state.update(player)
 				// timerText.text = "Score: %.1f".format(seconds)
 			}
 
-			// if (Game.paused) drawPausedScreen(drawer)
-			// if (Game.ended) drawEndGameScreen(drawer, didAppend)
 			if (Game.ended) println("game ended")
 			lastTime = timeNow
-			Global.updateStats
 
 			// println("Fps: %.2f".format(1.0/Global.delta))
 		})

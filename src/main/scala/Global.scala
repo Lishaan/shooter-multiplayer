@@ -1,4 +1,4 @@
-import scala.collection.mutable.{Map => MMap, ArrayBuffer}
+import scala.collection.mutable.ArrayBuffer
 import scala.collection.immutable.Map
 import scalafx.Includes._
 import scalafx.scene.paint.Color
@@ -36,7 +36,7 @@ case class Health (max: Double) {
 case class Position (var x: Double, var y: Double, var r: Double = 0) {
 	def rotateRight (speed: Double): Unit = { r += speed * Global.delta }
 	def rotateLeft  (speed: Double): Unit = { r -= speed * Global.delta }
-	
+
 	def moveForward(speed: Double) = { x += speed * Math.cos(r) * Global.delta; y += speed * Math.sin(r) * Global.delta }
 	def moveBackward(speed: Double) = { x -= speed * Math.cos(r) * Global.delta; y -= speed * Math.sin(r) * Global.delta }
 
@@ -101,59 +101,38 @@ object Global {
 	var seconds: Double = 0
 
 	/** The scale of the game */
-	var gameScale: Double = 1.2
+	val gameScale: Double = 1.2
 
 	/** The speed of the game */
-	var gameSpeed: Double = 1.0
+	val gameSpeed: Double = 1.0
 
 	/** The width of the game scene */
 	val gameWidth: Double = 600
 	/** The height of the game scene */
 	val gameHeight: Double = 600
 
-	/** The size of the play area */
-	val playAreaHeight: Double = Global.gameHeight/1.5
-
-	/** Whether the current game should append to the highscore when finished */
-	var appendToHighscoresFile: Boolean = true
-
-	/** The intiial sizes of the Moveable entities in the game */
-	val SIZE: MMap[String, Double] = MMap (
-		"Player"         -> 20,
-		"Bullet"         -> 4,
-		"Seeker"         -> 10,
-		"Bouncer"        -> 17,
-		"Shooter"        -> 30,
-		"ShooterBullet"  -> 6
-	)
-
-	/** The intiial speeds of the Moveable entities in the game */
-	val SPEED: MMap[String, Double] = MMap (
-		"Player"         -> 170,
-		"Bullet"         -> 500,
-		"Seeker"         -> 80,
-		"Bouncer"        -> 120,
-		"Shooter"        -> 70,
-		"ShooterBullet"  -> 300
-	)
-
-    val rotationSpeed: MMap[String, Double] = MMap (
+    val rotationSpeed: Map[String, Double] = Map (
         "Player" -> 0.00872664626 // (pi/360)
     )
 
-	/** The colors of all the Drawable entities in the game */
-	val color: Map[String, Color] = Map (
-		"Background"    -> Color.web("041A1A"),
-		"PlayArea"      -> Color.web("173B3B"),
-		"TimerText"     -> Color.web("FBFBFB"),
-		"PausedText"    -> Color.web("FBFBFB"),
-		"Player"        -> Color.web("FBFBFB"),
-		"Bullet"        -> Color.web("44f9ff"),
-		"ShooterBullet" -> Color.web("F7E8D0"),
-		"Seeker"        -> Color.web("6F997A"),
-		"Bouncer"       -> Color.web("79678A"),
-		"Shooter"       -> Color.web("856D48")
-		/* Link: https://coolors.co/0c0910-cdd1c4-5c80bc-6b2737-1d7874 */
+	/** The intiial sizes of the Moveable entities in the game */
+	val size: Map[String, Double] = Map (
+		"Player"         -> 20,
+		"Bullet"         -> 4
+		// "Seeker"         -> 10,
+		// "Bouncer"        -> 17,
+		// "Shooter"        -> 30,
+		// "ShooterBullet"  -> 6
+	)
+
+	/** The intiial speeds of the Moveable entities in the game */
+	val speed: Map[String, Double] = Map (
+		"Player"         -> 170,
+		"Bullet"         -> 500
+		// "Seeker"         -> 80,
+		// "Bouncer"        -> 120,
+		// "Shooter"        -> 70,
+		// "ShooterBullet"  -> 300
 	)
 
 	/** The health of all the Damageable entities */
@@ -163,40 +142,18 @@ object Global {
 		"Shooter" -> 100
 	)
 
-	/** The adjusted speeds of the Moveable entities in the game according to the current game's status */
-	val speed: MMap[String, Double] = MMap (
-		"Player"         -> Global.gameSpeed*SPEED("Player"),
-		"Bullet"         -> Global.gameSpeed*SPEED("Bullet"),
-		"Seeker"         -> Global.gameSpeed*SPEED("Seeker"),
-		"Bouncer"        -> Global.gameSpeed*SPEED("Bouncer"),
-		"Shooter"        -> Global.gameSpeed*SPEED("Shooter"),
-		"ShooterBullet"  -> Global.gameSpeed*SPEED("ShooterBullet")
+	/** The colors of all the Drawable entities in the game */
+	val color: Map[String, Color] = Map (
+		"Background"    -> Color.web("041A1A"),
+		// "PlayArea"      -> Color.web("173B3B"),
+		"TimerText"     -> Color.web("FBFBFB"),
+		"PausedText"    -> Color.web("FBFBFB"),
+		"Player"        -> Color.web("FBFBFB"),
+		"Bullet"        -> Color.web("44f9ff")
+		// "ShooterBullet" -> Color.web("F7E8D0"),
+		// "Seeker"        -> Color.web("6F997A"),
+		// "Bouncer"       -> Color.web("79678A"),
+		// "Shooter"       -> Color.web("856D48")
+		/* Link: https://coolors.co/0c0910-cdd1c4-5c80bc-6b2737-1d7874 */
 	)
-
-	/** The adjusted sizes of the Moveable entities in the game according to the current game's status */
-	val size: MMap[String, Double] = MMap (
-		"Player"         -> Global.gameScale*SIZE("Player"),
-		"Bullet"         -> Global.gameScale*SIZE("Bullet"),
-		"Seeker"         -> Global.gameScale*SIZE("Seeker"),
-		"Bouncer"        -> Global.gameScale*SIZE("Bouncer"),
-		"Shooter"        -> Global.gameScale*SIZE("Shooter"),
-		"ShooterBullet"  -> Global.gameScale*SIZE("ShooterBullet")
-	)
-
-	/** Updates all the sizes and the speeds of Moveable entities in the game according to the current status of the game. */
-	def updateStats: Unit = {
-		Global.speed("Player" ) = Global.gameSpeed*SPEED("Player")
-		Global.speed("Bullet" ) = Global.gameSpeed*SPEED("Bullet")
-		Global.speed("Seeker" ) = Global.gameSpeed*SPEED("Seeker")
-		Global.speed("Bouncer") = Global.gameSpeed*SPEED("Bouncer")
-		Global.speed("Shooter") = Global.gameSpeed*SPEED("Shooter")
-		Global.speed("ShooterBullet" ) = Global.gameSpeed*SPEED("ShooterBullet")
-
-		Global.size("Player" ) = Global.gameScale*SIZE("Player")
-		Global.size("Bullet" ) = Global.gameScale*SIZE("Bullet")
-		Global.size("Seeker" ) = Global.gameScale*SIZE("Seeker")
-		Global.size("Bouncer") = Global.gameScale*SIZE("Bouncer")
-		Global.size("Shooter") = Global.gameScale*SIZE("Shooter")
-		Global.size("ShooterBullet" ) = Global.gameScale*SIZE("ShooterBullet")
-	}
 }

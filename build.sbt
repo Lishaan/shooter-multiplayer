@@ -10,4 +10,6 @@ unmanagedResourceDirectories in Compile += { baseDirectory.value / "src/main/res
 
 fork in run := true
 
+connectInput in run := true
+
 offline := true

@@ -1,6 +1,6 @@
 class Server extends App {
     println("Server")
-    val gameState: GameState = new Game().getGameState()
+    val gameState: GameState = new GameState()
     gameState.print()
     // TODO: 
     // while (server is running) {
