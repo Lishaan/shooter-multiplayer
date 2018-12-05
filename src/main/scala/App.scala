@@ -37,6 +37,14 @@ object App extends App {
     |
     |  actor {
     |    provider = "akka.remote.RemoteActorRefProvider"
+    |    serializers {
+    |        java = "akka.serialization.JavaSerializer"
+    |        proto = "akka.remote.serialization.ProtobufSerializer"
+    |    }
+    |
+    |    serialization-bindings {
+    |        "game.GameState" = proto
+    |    }
     |  }
     |
     |  remote {

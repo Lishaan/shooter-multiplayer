@@ -34,11 +34,13 @@ class Server extends Actor {
 
         case Server.Start => {
             gameState.players.foreach(player => {
-                player.ref ! gameState
+                player.ref ! Client.CGameState(gameState)
+                println(player.ref)
             })
 
             gameState.players.foreach(player => {
                 player.ref ! Client.Begin
+                println(player.ref)
             })
         }
     }

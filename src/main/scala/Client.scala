@@ -27,12 +27,12 @@ class Client extends Actor {
 	// context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
 	override def receive = {
-		case StartJoin(server, port) => {
+		case Client.StartJoin(server, port) => {
 			val serverRef = context.actorSelection(s"akka.tcp://shooter@$server:$port/user/server")
 			serverRef ! Server.Join(self)
 		}
 
-		case CGameState(gs) => {
+		case Client.CGameState(gs) => {
 			gameState = gs
 		}
 
