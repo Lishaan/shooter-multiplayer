@@ -1,3 +1,5 @@
+package game
+
 import scalafx.Includes._
 import scalafx.scene.paint.Color
 import scalafx.scene.canvas.GraphicsContext

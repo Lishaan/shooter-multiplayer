@@ -1,15 +1,45 @@
-class Server extends App {
-    println("Server")
-    val gameState: GameState = new GameState()
-    gameState.print()
-    // TODO: 
-    // while (server is running) {
-    //     for (client <- clients) {
-    //         gameState.update with (client.playerObject)
-    //     }
+import scala.collection.mutable.ArrayBuffer
 
-    //     for (client <- clients) {
-    //         client.updateGameState with (gameState)
-    //     }
-    // }
+import Client._
+import Server._
+import akka.actor.{Actor, ActorRef}
+//import akka.pattern.ask
+import akka.remote.DisassociatedEvent
+//import akka.util.Timeout
+//import scalafx.collections.ObservableHashSet
+
+//import scala.concurrent.ExecutionContext.Implicits._
+//import scala.concurrent.Future
+//import scala.concurrent.duration._
+
+import game.GameState
+import game.Player
+
+object Server {
+    // val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
+    val gameState: GameState = new GameState()
+
+    case class Join(actor: ActorRef)
+    case object Start
+}
+
+class Server extends Actor {
+    // context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
+
+    override def receive: PartialFunction[Any, Unit] = {
+        case Server.Join(actor) => {
+            gameState.players += new Player(actor)
+            // players += acto
+        }
+
+        case Server.Start => {
+            gameState.players.foreach(player => {
+                player.ref ! gameState
+            })
+
+            gameState.players.foreach(player => {
+                player.ref ! Client.Begin
+            })
+        }
+    }
 }

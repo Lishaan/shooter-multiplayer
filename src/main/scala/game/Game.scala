@@ -1,3 +1,5 @@
+package game
+
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scalafx.Includes._
 import scalafx.application.JFXApp
@@ -21,7 +23,7 @@ object Game {
  */
 class Game extends PrimaryStage {
 	private var state: GameState = new GameState()
-	private val player = new Player("Player")
+	private val player = new Player(null)
 
 	title = s"${Game.name} - Play"
 	resizable = false
@@ -150,17 +152,17 @@ class Game extends PrimaryStage {
 	// 	drawer.fillText(if (scoreAppended) "Your score has been appended to the highscore" else "Your score did not append to the highscore", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize*3))			
 	// }
 
-	// /** Checks whether two Moveable entities are intersected.
-	//  *
-	//  *  @param moverA The first mover entity
-	//  *  @param moverB The second mover entity
-	//  *  @return a boolean value that determines whether moverA and moverB has intersected
-	//  */
-	// def intersected(moverA: Moveable, moverB: Moveable): Boolean = {
-	// 	val dx = moverB.x - moverA.x
-	// 	val dy = moverB.y - moverA.y
-	// 	val dist = math.sqrt(dx*dx + dy*dy)
+	/** Checks whether two Moveable entities are intersected.
+	 *
+	 *  @param moverA The first mover entity
+	 *  @param moverB The second mover entity
+	 *  @return a boolean value that determines whether moverA and moverB has intersected
+	 */
+	def intersected(moverA: Moveable, moverB: Moveable): Boolean = {
+		val dx = moverB.x - moverA.x
+		val dy = moverB.y - moverA.y
+		val dist = math.sqrt(dx*dx + dy*dy)
 
-	// 	return dist < math.abs(moverA.size + moverB.size)
-	// }
+		return dist < math.abs(moverA.size + moverB.size)
+	}
 }

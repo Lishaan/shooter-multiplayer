@@ -1,9 +1,13 @@
+package game
+
 import scalafx.Includes._
 import scalafx.scene.paint.Color
 import scalafx.scene.canvas.GraphicsContext
 
+import akka.actor.ActorRef
+
 object Player {
-    def generateID(): String = { scala.util.Random.alphanumeric.take(10).mkString }
+    def generateID(): String = (scala.util.Random.alphanumeric.take(10).mkString)
 }
 
 /** A Player object controlled by the user that inherits the traits: [[Drawable]], [[Moveable]] and [[Shootable]].
@@ -11,8 +15,8 @@ object Player {
  *  @constructor create a new instance of a Player object by the given player name
  *  @param playerName the name of the Player
  */
-class Player (private val _name: String = "Player") extends Drawable with Moveable with Shootable with Damageable {
-    private val _ID: String = Player.generateID()
+class Player (private val _ref: ActorRef) extends Drawable with Moveable with Shootable with Damageable {
+	private val _name: String = "Player"
 	private var _kills: Int = 0
 
 	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
@@ -82,10 +86,12 @@ class Player (private val _name: String = "Player") extends Drawable with Moveab
 		drawer.fillOval(gun_x, gun_y, size/2, size/2)
 	}
 
-	def ID = _ID
+	def ref = _ref
 	def name = _name
 	def kills = _kills
 
 	/** Increments the player's kills. */
 	def incrementKills = { _kills = _kills + 1 }
+
+	// def copy(player: Player): Unit = { this = player }
 }

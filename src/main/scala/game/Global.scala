@@ -1,3 +1,5 @@
+package game
+
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.immutable.Map
 import scalafx.Includes._
@@ -91,6 +93,8 @@ class Spawner (val enemyName: String, val delayHead: Double, val delayTail: Doub
 
 /** A Global static object that stores all the variables that change in the game every iteration of the game loop. */
 object Global {
+	val playAreaHeight: Double = Global.gameHeight/1.5
+	
 	/** The current player [[Position]] */
 	var playerPos: Position = new Position(Global.gameWidth/2, Global.gameHeight-50)
 

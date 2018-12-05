@@ -1,16 +1,14 @@
-import scala.io.StdIn
-
-object Main extends App {
-    println("ShooterMultiplayer menu")
+println("ShooterMultiplayer menu")
     println("1. Server")
     println("2. Client")
     println("3. Exit")
 
     val input: Int = getValidInput()
+    // val input: Int = 2
 
     input match {
-        case 1 => new Server().main(args)
-        case 2 => new Client().main(args)
+        // case 1 => new Server().main(args)
+        // case 2 => new Client().main(args)
         case 3 | _ => println("Exiting Application")
     }
 
@@ -36,4 +34,3 @@ object Main extends App {
 
         return 1
     }
-}

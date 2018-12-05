@@ -1,3 +1,5 @@
+package game
+
 import scala.collection.mutable.ArrayBuffer
 import scalafx.Includes._
 import scalafx.scene.paint.Color
@@ -5,7 +7,7 @@ import scalafx.scene.canvas.GraphicsContext
 
 /** A trait that defines an entity that can shoot an [[Ammo]] object. */
 trait Shootable {
-	protected var _bullets: ArrayBuffer[Ammo] = ArrayBuffer()
+	protected var _bullets: ArrayBuffer[Ammo] = ArrayBuffer[Ammo]()
 
 	/** The ammo array that stores all the ammo currently in the game scene. */
 	def bullets: ArrayBuffer[Ammo] = _bullets
@@ -16,7 +18,7 @@ trait Shootable {
 		// Checks if the bullets array is empty or not
 		if (!bullets.isEmpty) {
 			// Creates a buffer that stores all the indexes of the bullets in the bullets array that has to be removed
-			var indexes: ArrayBuffer[Int] = ArrayBuffer()
+			var indexes: ArrayBuffer[Int] = ArrayBuffer[Int]()
 
 			// Bullets move
 			for (i <- 0 until bullets.length) {
