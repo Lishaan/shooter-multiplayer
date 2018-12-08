@@ -15,14 +15,14 @@ object Player {
  *  @constructor create a new instance of a Player object by the given player name
  *  @param playerName the name of the Player
  */
-class Player (private val _ref: ActorRef) extends Drawable with Moveable with Shootable with Damageable {
+class Player (private val _ref: ActorRef) extends Drawable with Moveable with Shootable with Damageable with Serializable {
 	private val _name: String = "Player"
 	private var _kills: Int = 0
 
 	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
 	val _health: Health = new Health(100)
 	var _size: Double = Global.size("Player")
-	val _color: Color = Global.color("Player")
+	val _color: String = Global.color("Player")
 	var _speed: Double = Global.speed("Player")
     var _rotationSpeed: Double = 4
 
@@ -71,7 +71,7 @@ class Player (private val _ref: ActorRef) extends Drawable with Moveable with Sh
 		bullets.foreach(_.draw(drawer))
 
 		// Draws at center
-		drawer.fill = color
+		drawer.fill = Color.web(color)
 		drawer.fillOval(position.x-size, position.y-size, size*2, size*2)
 
 		// Draw gun

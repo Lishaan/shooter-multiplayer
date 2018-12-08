@@ -147,13 +147,13 @@ object Global {
 	)
 
 	/** The colors of all the Drawable entities in the game */
-	val color: Map[String, Color] = Map (
-		"Background"    -> Color.web("041A1A"),
+	val color: Map[String, String] = Map (
+		"Background"    -> "041A1A",
 		// "PlayArea"      -> Color.web("173B3B"),
-		"TimerText"     -> Color.web("FBFBFB"),
-		"PausedText"    -> Color.web("FBFBFB"),
-		"Player"        -> Color.web("FBFBFB"),
-		"Bullet"        -> Color.web("44f9ff")
+		"TimerText"     -> "FBFBFB",
+		"PausedText"    -> "FBFBFB",
+		"Player"        -> "FBFBFB",
+		"Bullet"        -> "44f9ff"
 		// "ShooterBullet" -> Color.web("F7E8D0"),
 		// "Seeker"        -> Color.web("6F997A"),
 		// "Bouncer"       -> Color.web("79678A"),

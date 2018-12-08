@@ -40,10 +40,11 @@ object App extends App {
     |    serializers {
     |        java = "akka.serialization.JavaSerializer"
     |        proto = "akka.remote.serialization.ProtobufSerializer"
+    |        custom = "serialization.CustomSerializer"
     |    }
     |
     |    serialization-bindings {
-    |        "game.GameState" = proto
+    |        "game.GameState" = custom
     |    }
     |  }
     |

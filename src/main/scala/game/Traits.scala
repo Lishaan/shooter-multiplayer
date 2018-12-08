@@ -41,10 +41,10 @@ trait Shootable {
 
 /** A trait that defines an entity that can be drawn into the game scene. */
 trait Drawable {
-	protected val _color: Color
+	protected val _color: String
 
 	/** The color of the [[Drawable]] entitiy. */
-	def color: Color = _color
+	def color: String = _color
 
 	/** Defines how the entity is drawn.
 	 *

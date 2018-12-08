@@ -22,7 +22,7 @@ class Bullet (playerPos: Position) extends Ammo {
 	var _speed: Double = Global.speed("Bullet")
     var _rotationSpeed: Double = 0
 	var _size: Double  = Global.size("Bullet")
-	val _color: Color = Global.color("Bullet")
+	val _color: String = Global.color("Bullet")
 
 	def move = { 
 		speed = Global.speed("Bullet")
@@ -32,7 +32,7 @@ class Bullet (playerPos: Position) extends Ammo {
 
 	def draw(drawer: GraphicsContext): Unit = {
 		// Draws at center
-		drawer.fill = color
+		drawer.fill = Color.web(color)
 		drawer.fillOval(position.x-size, position.y-size, size*2, size*2)
 	}
 

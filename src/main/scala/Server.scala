@@ -18,7 +18,7 @@ import game.Player
 import serialization.CustomSerializer
 
 object Server {
-    val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
+    // val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
 
     case class Join(actor: ActorRef)
     case object Start
@@ -31,18 +31,18 @@ class Server extends Actor {
 
     override def receive: PartialFunction[Any, Unit] = {
         case Server.Join(actor) => {
-            // gameState.players += new Player(actor)
-            Server.clients += actor
+            gameState.addPlayer(new Player(actor))
+            // Server.clients += actor
         }
 
         case Server.Start => {
-            Server.clients.foreach(client => {
-                client ! serializer.toBinary(gameState)
+            gameState.players.foreach(player => {
+                player.ref ! serializer.toBinary(gameState)
             })
 
-            Server.clients.foreach(client => {
-                client ! Client.Begin
-            })
+            gameState.players.foreach(player => {
+                player.ref ! Client.Begin
+            })            
         }
     }
 }
