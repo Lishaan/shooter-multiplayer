@@ -15,32 +15,33 @@ import akka.remote.DisassociatedEvent
 import game.GameState
 import game.Player
 
+import serialization.CustomSerializer
+
 object Server {
-    // val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
-    val gameState: GameState = new GameState()
+    val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
 
     case class Join(actor: ActorRef)
     case object Start
 }
 
 class Server extends Actor {
+    val gameState: GameState = new GameState()
+    val serializer = new CustomSerializer()
     // context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
     override def receive: PartialFunction[Any, Unit] = {
         case Server.Join(actor) => {
-            gameState.players += new Player(actor)
-            // players += acto
+            // gameState.players += new Player(actor)
+            Server.clients += actor
         }
 
         case Server.Start => {
-            gameState.players.foreach(player => {
-                player.ref ! Client.CGameState(gameState)
-                println(player.ref)
+            Server.clients.foreach(client => {
+                client ! serializer.toBinary(gameState)
             })
 
-            gameState.players.foreach(player => {
-                player.ref ! Client.Begin
-                println(player.ref)
+            Server.clients.foreach(client => {
+                client ! Client.Begin
             })
         }
     }
