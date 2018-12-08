@@ -23,7 +23,7 @@ object Game {
  */
 class Game extends PrimaryStage {
 	private var state: GameState = new GameState()
-	private val player = new Player(null)
+	private val player = new Player(1)
 
 	title = s"${Game.name} - Play"
 	resizable = false

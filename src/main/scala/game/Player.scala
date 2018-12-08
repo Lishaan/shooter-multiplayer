@@ -15,7 +15,7 @@ object Player {
  *  @constructor create a new instance of a Player object by the given player name
  *  @param playerName the name of the Player
  */
-class Player (private val _ref: ActorRef) extends Drawable with Moveable with Shootable with Damageable with Serializable {
+class Player (private val _ID: Int) extends Drawable with Moveable with Shootable with Damageable with Serializable {
 	private val _name: String = "Player"
 	private var _kills: Int = 0
 
@@ -86,7 +86,7 @@ class Player (private val _ref: ActorRef) extends Drawable with Moveable with Sh
 		drawer.fillOval(gun_x, gun_y, size/2, size/2)
 	}
 
-	def ref = _ref
+	def ID = _ID
 	def name = _name
 	def kills = _kills
 
