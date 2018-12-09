@@ -1,4 +1,4 @@
-package game
+package com.game.objects
 
 import scalafx.Includes._
 import scalafx.scene.paint.Color

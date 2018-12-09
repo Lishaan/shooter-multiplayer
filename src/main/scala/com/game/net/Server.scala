@@ -1,3 +1,5 @@
+package com.game.net
+
 import scala.collection.mutable.ArrayBuffer
 
 import Client._
@@ -12,10 +14,9 @@ import akka.remote.DisassociatedEvent
 //import scala.concurrent.Future
 //import scala.concurrent.duration._
 
-import game.GameState
-import game.Player
+import com.game.objects.{GameState, Player}
 
-import serialization.CustomSerializer
+import com.game.serialization.CustomSerializer
 
 object Server {
     private var currentID: Int = 0
@@ -28,6 +29,7 @@ object Server {
     // val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
 
     case class Join(actor: ActorRef)
+    case class UpdateGameState(player: Player)
     case object Start
 }
 
@@ -41,15 +43,15 @@ class Server extends Actor {
         case Server.Join(actor) => {
             val ID: Int = Server.getID()
             clients += ((actor, ID))
-
+            println("JOIN")
             gameState.addPlayer(new Player(ID))
         }
 
         case Server.Start => {
             clients.foreach {
                 case (clientRef, playerID) => {
-                    clientRef ! serializer.toBinary(gameState)
-                    clientRef ! playerID
+                    clientRef ! Client.CGameState(serializer.toBinary(gameState))
+                    clientRef ! Client.PlayerInfo(playerID)
                 }
             }
 
@@ -58,6 +60,29 @@ class Server extends Actor {
                     clientRef ! Client.Begin
                 }
             }
+
+            context.become(begun)
+            gameState.print()
         }
+
+        case a: Any => {
+            val s = a.toString
+            println(s"Default Server ${s}")
+        }
+    }
+
+    def begun: Receive = {
+        case Server.UpdateGameState(player) => {
+            println("3")
+            gameState.update(player)
+
+            clients.foreach {
+                case (clientRef, _) => {
+                    clientRef ! Client.CGameState(serializer.toBinary(gameState))
+                }
+            }
+        }
+
+        case _ => println("Begu2n Server")
     }
 }

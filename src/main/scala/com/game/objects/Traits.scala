@@ -1,4 +1,4 @@
-package game
+package com.game.objects
 
 import scala.collection.mutable.ArrayBuffer
 import scalafx.Includes._

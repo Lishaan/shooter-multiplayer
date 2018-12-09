@@ -1,4 +1,4 @@
-package serialization
+package com.game.serialization
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.serialization._
@@ -6,7 +6,7 @@ import com.typesafe.config.ConfigFactory
 
 import java.io.{ByteArrayOutputStream, ObjectOutputStream, ObjectInputStream, ByteArrayInputStream}
 
-import game.GameState
+import com.game.objects.GameState
 
 class CustomSerializer extends SerializerWithStringManifest {
     def identifier = 78987832
