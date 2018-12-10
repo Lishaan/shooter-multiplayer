@@ -17,11 +17,26 @@ import akka.pattern.ask
 
 object Game {
 	val name: String = "Shooter Multiplayer"
-	var playerID: Int = Int.MaxValue
+	@volatile var playerID: Int = Int.MaxValue
 	@volatile var state: GameState = new GameState()
+	@volatile var startGameLoop: Boolean = false
 
 	/** Determines whether the current game has ended. */
 	var ended: Boolean = false
+
+	/** Checks whether two Moveable entities are intersected.
+	*
+	*  @param moverA The first mover entity
+	*  @param moverB The second mover entity
+	*  @return a boolean value that determines whether moverA and moverB has intersected
+	*/
+	def intersected(moverA: Moveable, moverB: Moveable): Boolean = {
+		val dx = moverB.x - moverA.x
+		val dy = moverB.y - moverA.y
+		val dist = math.sqrt(dx*dx + dy*dy)
+
+		return dist < math.abs(moverA.size + moverB.size)
+	}
 }
 
 /** A stage where a game is played on the scene until the game ends.
@@ -60,7 +75,6 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 			val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
 				player.ID = Game.playerID
-				println(player.ID)
 
 				if (lastTime > 0) {
 					// Delta time
@@ -72,8 +86,9 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					// Drawings
 					drawer.fill = Global.color("Background")
 					drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
-					Game.state.players.foreach(player => player.draw(drawer))
-					
+					player.draw(drawer)
+					Game.state.playersExcept(player).foreach(player => player.draw(drawer))
+
 					// Player move
 					if (keys( "Up" )) player.move("Forward")
 					if (keys("Down")) player.move("Backward")
@@ -85,8 +100,6 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					// println((player.position.r).toString)
 
 					seconds += delta
-					// state.update(player)
-					// timerText.text = "Score: %.1f".format(seconds)
 				}
 
 				if (Game.ended) println("game ended")
@@ -94,11 +107,11 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 				requestRate += 1
 
 				if (requestRate % 2 == 0) {
+					// Game.state.update(player)
 					clientRef ! Client.UpdateGameState(player)
 				}
-				println("Fps: %.2f".format(1.0/Global.delta))
-				println("Seconds: %.2f".format(seconds))
-				println(s"$requestRate")
+				
+				// println("Fps: %.2f".format(1.0/Global.delta))
 			})
 
 			// Key pressed events
@@ -168,18 +181,4 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 	// 	drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
 	// 	drawer.fillText(if (scoreAppended) "Your score has been appended to the highscore" else "Your score did not append to the highscore", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize*3))			
 	// }
-
-	/** Checks whether two Moveable entities are intersected.
-	*
-	*  @param moverA The first mover entity
-	*  @param moverB The second mover entity
-	*  @return a boolean value that determines whether moverA and moverB has intersected
-	*/
-	def intersected(moverA: Moveable, moverB: Moveable): Boolean = {
-		val dx = moverB.x - moverA.x
-		val dy = moverB.y - moverA.y
-		val dist = math.sqrt(dx*dx + dy*dy)
-
-		return dist < math.abs(moverA.size + moverB.size)
-	}
 }

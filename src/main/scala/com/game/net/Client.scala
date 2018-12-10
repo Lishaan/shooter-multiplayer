@@ -38,27 +38,18 @@ class Client extends Actor {
 		}
 
 		case Client.Begin => {
-			println("I HAVE BEGUN")
 			context.become(begun)			
 		}
 
 		case Client.CGameState(bytes) => {
 			val value: AnyRef = serializer.fromBinary(bytes, classOf[GameState].getName)
 			Game.state = value.asInstanceOf[GameState]
-
-			//gameState.print()
 		}
 
 		case Client.PlayerInfo(id) => {
 			playerID = id
 			Game.playerID = id
 		}
-
-		// case Client.UpdateGameState => {
-		// 	println("0.5")
-		// 	val serverRef = context.actorSelection(serverSelection(serverInfo))
-		// 	serverRef ! Server.UpdateGameState(gameState.getPlayerByID(playerID))
-		// }
 
 		case _ => println("Default Client")
 	}

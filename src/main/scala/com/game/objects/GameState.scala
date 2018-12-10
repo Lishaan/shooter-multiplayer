@@ -17,25 +17,66 @@ object GameState {
 }
 
 class GameState extends Serializable {
-    // private val _intersectedPlayerIDs: ArrayBuffer[(String, String)] = ArrayBuffer[(String, String)]()
     private val _players: ArrayBuffer[Player] = new ArrayBuffer[Player]()
 
     def addPlayer(player: Player): Unit = (players += player)
+
+    def playersExcept(player: Player): ArrayBuffer[Player] = {
+        val out: ArrayBuffer[Player] = ArrayBuffer[Player]()
+        for (p <- players; if (p.ID != player.ID)) (out += p)
+
+        return out
+    }
 
     def getPlayerByID(ID: Int): Player = {
         var player: Player = null
 
         for (p <- players; if (p.ID == ID)) {
-            println(s"FOUND PLAYER ${p.toString()}")
             player = p
         }
 
         if (player == null) {
             println("GAME STATE UPDATE ERROR")
-            return new Player(1)
+            return new Player(Int.MinValue)
         } else {
-            println("UPDATED GAME STATE")
             return player
+        }
+    }
+
+    def getPlayerIndexByID(playerID: Int): Int = {
+        var index: Int = 0
+        breakable {
+            for (player <- players) {
+                if (player.ID == playerID) {
+                    break
+                } else {
+                    index += 1
+                }
+            }
+        }
+
+        return index
+    }
+
+    def getPlayerByIndex(index: Int): Player = {
+        return players(index)
+    }
+
+    def updateIntersections(): Unit = {
+        // Game logic
+        for (p1 <- players; p2 <- players; if (p1.ID != p2.ID)) {
+            p1.bullets.foreach(bullet => {
+                if (Game.intersected(p2, bullet)) {
+                    p2.inflictDamage(bullet.damage)
+                    bullet.remove
+                }
+            })
+            p2.bullets.foreach(bullet => {
+                if (Game.intersected(p1, bullet)) {
+                    p1.inflictDamage(bullet.damage)
+                    bullet.remove
+                }
+            })
         }
     }
 
@@ -51,11 +92,13 @@ class GameState extends Serializable {
             }
         }
 
-        players(indexToUpdate) = playerToUpdate
+        if (indexToUpdate < players.length) {
+            players(indexToUpdate) = playerToUpdate
+        }
     }
 
     def print(): Unit = {
-        println("GAMESTATE -> Players:")
+        println("GAMESTATE: Players:")
         players.foreach(player => println(player.toString))
     }
 

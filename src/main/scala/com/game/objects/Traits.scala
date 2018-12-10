@@ -88,7 +88,11 @@ trait Moveable {
     def rotateRight: Unit
 
 	/** Removes the entity from the game scene. */
-	def remove: Unit = { _position.x = -800 }
+	def remove: Unit = {
+		position.x = -(800 * 800)
+		position.y = (800 * 800)
+		position.r = -1.5
+	}
 }
 
 /** A trait that defines an entity that can be damaged. */
@@ -108,5 +112,5 @@ trait Damageable {
 	 *
 	 *  @param damage the damage given
 	 */
-	def inflictDamage(damage: Double): Unit = { _health.current = _health.current - damage }
+	def inflictDamage(damage: Double): Unit = (health.current -= damage)
 }

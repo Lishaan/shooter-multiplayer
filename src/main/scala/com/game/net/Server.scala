@@ -14,7 +14,7 @@ import akka.remote.DisassociatedEvent
 //import scala.concurrent.Future
 //import scala.concurrent.duration._
 
-import com.game.objects.{GameState, Player}
+import com.game.objects.{Game, GameState, Player}
 
 import com.game.serialization.CustomSerializer
 
@@ -41,7 +41,6 @@ class Server extends Actor {
         case Server.Join(actor) => {
             val ID: Int = Server.getID()
             clients += ((actor, ID))
-            println("JOIN")
             gameState.addPlayer(new Player(ID))
         }
 
@@ -72,6 +71,7 @@ class Server extends Actor {
     def begun: Receive = {
         case Server.UpdateGameState(player) => {
             gameState.update(player)
+            // gameState.updateIntersections()
 
             clients.foreach {
                 case (clientRef, _) => {
