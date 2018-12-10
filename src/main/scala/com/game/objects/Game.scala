@@ -18,6 +18,7 @@ import akka.pattern.ask
 object Game {
 	val name: String = "Shooter Multiplayer"
 	@volatile var playerID: Int = Int.MaxValue
+	@volatile var playerIndex: Int = Int.MaxValue
 	@volatile var state: GameState = new GameState()
 	@volatile var startGameLoop: Boolean = false
 
@@ -44,7 +45,9 @@ object Game {
  *  @param playerName the name of the current game's player
  */
 class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: ActorRef) extends JFXApp {
-	private val player = new Player(Game.playerID)
+	private var player = new Player(Game.playerID)
+
+	Game.playerIndex = Game.state.getPlayerIndexByID(Game.playerID)
 
 	clientRef ! Client.UpdateGameState(player)
 
@@ -59,7 +62,8 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 				"Up"     -> false,
 				"Right"  -> false,
 				"Down"   -> false,
-				"Left"   -> false
+				"Left"   -> false,
+				"Space"  -> false
 			)
 
 			var lastTime: Long = -3
@@ -73,8 +77,11 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 			var playerIsDead: Boolean = false
 
+			// player = Game.state.getPlayerByIndex(Game.playerIndex)
+
 			val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
 				player.ID = Game.playerID
+				player = Game.state.getPlayerByIndex(Game.playerIndex)
 
 				if (lastTime > 0) {
 					// Delta time
@@ -97,6 +104,12 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					if (keys("Right")) player.rotateRight
 					if (keys("Left" )) player.rotateLeft
 
+					// player shoot
+					if (keys("Space")) {
+						player.shootBullet
+						keys("Space") = false
+					}
+
 					// println((player.position.r).toString)
 
 					seconds += delta
@@ -106,10 +119,10 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 				lastTime = timeNow
 				requestRate += 1
 
-				if (requestRate % 2 == 0) {
-					// Game.state.update(player)
-					clientRef ! Client.UpdateGameState(player)
-				}
+				// if (requestRate % 2 == 0) {
+				Game.state.update(player)
+				clientRef ! Client.UpdateGameState(player)
+				// }
 				
 				// println("Fps: %.2f".format(1.0/Global.delta))
 			})
@@ -136,7 +149,7 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					case KeyCode.Down => (keys("Down") = false)
 					case KeyCode.Left => (keys("Left") = false)
 
-					case KeyCode.Space => (player.shootBullet)
+					case KeyCode.Space => (keys("Space") = true)
 
 					// Quitting
 					case KeyCode.Q => { 

@@ -71,7 +71,7 @@ class Server extends Actor {
     def begun: Receive = {
         case Server.UpdateGameState(player) => {
             gameState.update(player)
-            // gameState.updateIntersections()
+            gameState.updateIntersections()
 
             clients.foreach {
                 case (clientRef, _) => {

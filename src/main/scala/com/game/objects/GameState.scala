@@ -59,7 +59,11 @@ class GameState extends Serializable {
     }
 
     def getPlayerByIndex(index: Int): Player = {
-        return players(index)
+        if (index < players.length) {
+            return players(index)
+        } else {
+            return new Player(Int.MinValue)
+        }
     }
 
     def updateIntersections(): Unit = {

@@ -56,9 +56,9 @@ class Client extends Actor {
 
 	def begun: Receive = {
 		case Client.UpdateGameState(player) => {
-			Game.state.update(player)
+			// Game.state.update(player)
 			val serverRef = context.actorSelection(serverSelection(serverInfo))
-			serverRef ! Server.UpdateGameState(Game.state.getPlayerByID(playerID))
+			serverRef ! Server.UpdateGameState(player)
 		}
 
 		case Client.CGameState(bytes) => {
