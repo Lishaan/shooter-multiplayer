@@ -32,7 +32,7 @@ class GameState extends Serializable {
 
         if (player == null) {
             println("GAME STATE UPDATE ERROR")
-            return new Player(-1)
+            return new Player(1)
         } else {
             println("UPDATED GAME STATE")
             return player
@@ -44,7 +44,7 @@ class GameState extends Serializable {
 
         breakable {
             for (index <- 0 until players.length) {
-                if (players(index).ID equals playerToUpdate.ID) {
+                if (players(index).ID == playerToUpdate.ID) {
                     indexToUpdate = index
                     break
                 }
@@ -55,7 +55,7 @@ class GameState extends Serializable {
     }
 
     def print(): Unit = {
-        println("Players")
+        println("GAMESTATE -> Players:")
         players.foreach(player => println(player.toString))
     }
 

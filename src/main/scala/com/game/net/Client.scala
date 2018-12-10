@@ -20,6 +20,7 @@ object Client {
 	case class PlayerInfo(id: Int)
 	case object Begin
 	case class UpdateGameState(player: Player)
+	case class UpdatePlayerID(ID: Int)
 }
 
 class Client extends Actor {
@@ -27,7 +28,6 @@ class Client extends Actor {
 	private val serverSelection: (ServerInfo) => String = (si: ServerInfo) => s"akka.tcp://shooter@${si.ip}:${si.port}/user/server"
 	private val serializer = new CustomSerializer()
 	private var playerID: Int = Int.MaxValue
-	private var gameState: GameState = new GameState()
 	// context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
 	override def receive: PartialFunction[Any, Unit] = {
@@ -44,41 +44,37 @@ class Client extends Actor {
 
 		case Client.CGameState(bytes) => {
 			val value: AnyRef = serializer.fromBinary(bytes, classOf[GameState].getName)
-			gameState = value.asInstanceOf[GameState]
+			Game.state = value.asInstanceOf[GameState]
 
-			gameState.print()
+			//gameState.print()
 		}
 
 		case Client.PlayerInfo(id) => {
 			playerID = id
+			Game.playerID = id
 		}
 
-		case Client.UpdateGameState => {
-			println("0.5")
-			val serverRef = context.actorSelection(serverSelection(serverInfo))
-			serverRef ! Server.UpdateGameState(gameState.getPlayerByID(playerID))
-		}
+		// case Client.UpdateGameState => {
+		// 	println("0.5")
+		// 	val serverRef = context.actorSelection(serverSelection(serverInfo))
+		// 	serverRef ! Server.UpdateGameState(gameState.getPlayerByID(playerID))
+		// }
 
 		case _ => println("Default Client")
 	}
 
 	def begun: Receive = {
 		case Client.UpdateGameState(player) => {
-			println("1")
-			gameState.update(player)
+			Game.state.update(player)
 			val serverRef = context.actorSelection(serverSelection(serverInfo))
-			serverRef ! Server.UpdateGameState(gameState.getPlayerByID(playerID))
+			serverRef ! Server.UpdateGameState(Game.state.getPlayerByID(playerID))
 		}
 
 		case Client.CGameState(bytes) => {
-			println("2")
 			val value: AnyRef = serializer.fromBinary(bytes, classOf[GameState].getName)
-			gameState = value.asInstanceOf[GameState]
-			Game.state = gameState
-
-			gameState.print()
+			Game.state = value.asInstanceOf[GameState]
 		}
 
-		case _ => println("Begun1 Client")
+		case _ => println("Begun Client")
 	}
 }

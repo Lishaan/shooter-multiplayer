@@ -17,7 +17,7 @@ abstract class Ammo extends Drawable with Moveable {
  *  @constructor create a new bullet with a position
  *  @param playerPos the initial position of the bullet
  */
-class Bullet (playerPos: Position) extends Ammo {
+class Bullet (playerPos: Position) extends Ammo with Serializable {
 	val _position: Position = new Position(playerPos.x, playerPos.y, playerPos.r)
 	var _speed: Double = Global.speed("Bullet")
     var _rotationSpeed: Double = 0

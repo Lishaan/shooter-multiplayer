@@ -10,13 +10,15 @@ import scalafx.scene.input.{KeyEvent, KeyCode}
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.animation.AnimationTimer
 
-import com.game.net.Client
+import com.game.net.{Client, Server}
 
 import akka.actor.{ActorSystem, ActorRef}
+import akka.pattern.ask
 
 object Game {
 	val name: String = "Shooter Multiplayer"
-	var state: GameState = new GameState()
+	var playerID: Int = Int.MaxValue
+	@volatile var state: GameState = new GameState()
 
 	/** Determines whether the current game has ended. */
 	var ended: Boolean = false
@@ -27,8 +29,7 @@ object Game {
  *  @param playerName the name of the current game's player
  */
 class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: ActorRef) extends JFXApp {
-	@volatile private var state: GameState = new GameState()
-	private val player = new Player(1)
+	private val player = new Player(Game.playerID)
 
 	clientRef ! Client.UpdateGameState(player)
 
@@ -57,6 +58,9 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 			var playerIsDead: Boolean = false
 
 			val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
+				player.ID = Game.playerID
+				println(player.ID)
+
 				if (lastTime > 0) {
 					// Delta time
 					val delta = (timeNow-lastTime)/1e9
@@ -68,10 +72,7 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					// Drawings
 					drawer.fill = Global.color("Background")
 					drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
-					// for (player <- state.players){
-						player.draw(drawer)
-
-					// }
+					Game.state.players.foreach(player => player.draw(drawer))
 					
 					// Player move
 					if (keys( "Up" )) player.move("Forward")
@@ -139,12 +140,6 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 	/** Closes/ends the current game by closing the stage. */
 	def closeGame = stage.close
-
-	def getGameState(): GameState = this.state
-	
-	def updateGameState(gameState: GameState): Unit = {
-		state = gameState
-	}
 
 	/** Draws the menu that is displayed when a game ends.
 	*

@@ -23,10 +23,8 @@ object Server {
 
     def getID(): Int = {
         currentID += 1
-
         return currentID
     }
-    // val clients: ArrayBuffer[ActorRef] = ArrayBuffer[ActorRef]()
 
     case class Join(actor: ActorRef)
     case class UpdateGameState(player: Player)
@@ -35,8 +33,8 @@ object Server {
 
 class Server extends Actor {
     val clients: ArrayBuffer[(ActorRef, Int)] = ArrayBuffer[(ActorRef, Int)]()
-    val gameState: GameState = new GameState()
     val serializer = new CustomSerializer()
+    @volatile var gameState: GameState = new GameState()
     // context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
     override def receive: PartialFunction[Any, Unit] = {
@@ -73,7 +71,6 @@ class Server extends Actor {
 
     def begun: Receive = {
         case Server.UpdateGameState(player) => {
-            println("3")
             gameState.update(player)
 
             clients.foreach {
@@ -81,8 +78,10 @@ class Server extends Actor {
                     clientRef ! Client.CGameState(serializer.toBinary(gameState))
                 }
             }
+
+            gameState.print()
         }
 
-        case _ => println("Begu2n Server")
+        case _ => println("Begun Server")
     }
 }
