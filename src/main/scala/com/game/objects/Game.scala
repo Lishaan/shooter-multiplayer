@@ -49,7 +49,8 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 			var lastTime: Long = -3
 			var seconds: Double = 0.0
-			Global.seconds = seconds
+
+			var requestRate: Int = 0
 
 			// Canvas
 			val canvas: Canvas = new Canvas(Global.gameWidth, Global.gameHeight);
@@ -64,10 +65,9 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 				if (lastTime > 0) {
 					// Delta time
 					val delta = (timeNow-lastTime)/1e9
+					Global.delta = delta
 					
 					player.updateBullets
-					Global.playerPos = player.position
-					Global.delta = delta
 
 					// Drawings
 					drawer.fill = Global.color("Background")
@@ -85,16 +85,20 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					// println((player.position.r).toString)
 
 					seconds += delta
-					Global.seconds = seconds
 					// state.update(player)
 					// timerText.text = "Score: %.1f".format(seconds)
 				}
 
 				if (Game.ended) println("game ended")
 				lastTime = timeNow
+				requestRate += 1
 
-				clientRef ! Client.UpdateGameState(player)
-				// println("Fps: %.2f".format(1.0/Global.delta))
+				if (requestRate % 2 == 0) {
+					clientRef ! Client.UpdateGameState(player)
+				}
+				println("Fps: %.2f".format(1.0/Global.delta))
+				println("Seconds: %.2f".format(seconds))
+				println(s"$requestRate")
 			})
 
 			// Key pressed events
@@ -134,6 +138,7 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 			}
 
 			content = List(canvas)
+			// TODO: Server send client the request
 			gameLoop.start
 		}
 	}

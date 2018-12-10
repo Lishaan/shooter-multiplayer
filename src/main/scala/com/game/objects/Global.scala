@@ -93,16 +93,16 @@ class Spawner (val enemyName: String, val delayHead: Double, val delayTail: Doub
 
 /** A Global static object that stores all the variables that change in the game every iteration of the game loop. */
 object Global {
-	val playAreaHeight: Double = Global.gameHeight/1.5
+	// val playAreaHeight: Double = Global.gameHeight/1.5
 	
 	/** The current player [[Position]] */
-	var playerPos: Position = new Position(Global.gameWidth/2, Global.gameHeight-50)
+	// var playerPos: Position = new Position(Global.gameWidth/2, Global.gameHeight-50)
 
 	/** The current delta time difference */
 	var delta: Double = 0
 
 	/** The seconds surpassed of the current [[Game]] */
-	var seconds: Double = 0
+	// var seconds: Double = 0
 
 	/** The scale of the game */
 	val gameScale: Double = 1.2
