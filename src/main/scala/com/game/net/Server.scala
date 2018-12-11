@@ -41,7 +41,7 @@ class Server extends Actor {
         case Server.Join(actor) => {
             val ID: Int = Server.getID()
             clients += ((actor, ID))
-            gameState.addPlayer(new Player(ID))
+            // gameState.addPlayer(new Player(ID))
         }
 
         case Server.Start => {

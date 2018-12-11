@@ -93,7 +93,7 @@ class Spawner (val enemyName: String, val delayHead: Double, val delayTail: Doub
 
 /** A Global static object that stores all the variables that change in the game every iteration of the game loop. */
 object Global {
-	// val playAreaHeight: Double = Global.gameHeight/1.5
+	val playAreaHeight: Double = Global.gameHeight/1.5
 	
 	/** The current player [[Position]] */
 	// var playerPos: Position = new Position(Global.gameWidth/2, Global.gameHeight-50)
@@ -122,7 +122,8 @@ object Global {
 	/** The intiial sizes of the Moveable entities in the game */
 	val size: Map[String, Double] = Map (
 		"Player"         -> 20,
-		"Bullet"         -> 4
+		"Bullet"         -> 4,
+		"Pellet"		 -> 4
 		// "Seeker"         -> 10,
 		// "Bouncer"        -> 17,
 		// "Shooter"        -> 30,
@@ -153,7 +154,8 @@ object Global {
 		"TimerText"     -> "FBFBFB",
 		"PausedText"    -> "FBFBFB",
 		"Player"        -> "FBFBFB",
-		"Bullet"        -> "44f9ff"
+		"Bullet"        -> "44f9ff",
+		"Pellet"        -> "44f9ff"
 		// "ShooterBullet" -> Color.web("F7E8D0"),
 		// "Seeker"        -> Color.web("6F997A"),
 		// "Bouncer"       -> Color.web("79678A"),

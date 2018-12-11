@@ -17,54 +17,63 @@ object GameState {
 }
 
 class GameState extends Serializable {
-    private val _players: ArrayBuffer[Player] = new ArrayBuffer[Player]()
+    private var _players: Array[Player] = Array[Player](new Player(1), new Player(2))
 
-    def addPlayer(player: Player): Unit = (players += player)
+    def getPlayerByID(id: Int): Player = {
+        id match {
+            case 1 => return players(0)
+            case 2 => return players(1)
 
-    def playersExcept(player: Player): ArrayBuffer[Player] = {
-        val out: ArrayBuffer[Player] = ArrayBuffer[Player]()
-        for (p <- players; if (p.ID != player.ID)) (out += p)
-
-        return out
-    }
-
-    def getPlayerByID(ID: Int): Player = {
-        var player: Player = null
-
-        for (p <- players; if (p.ID == ID)) {
-            player = p
-        }
-
-        if (player == null) {
-            println("GAME STATE UPDATE ERROR")
-            return new Player(Int.MinValue)
-        } else {
-            return player
+            case _ => return new Player(-1)
         }
     }
 
-    def getPlayerIndexByID(playerID: Int): Int = {
-        var index: Int = 0
-        breakable {
-            for (player <- players) {
-                if (player.ID == playerID) {
-                    break
-                } else {
-                    index += 1
-                }
-            }
-        }
+    // def addPlayer(player: Player): Unit = (players += player)
 
-        return index
-    }
+    // def playersExcept(player: Player): ArrayBuffer[Player] = {
+    //     val out: ArrayBuffer[Player] = ArrayBuffer[Player]()
+    //     for (p <- players; if (p.ID != player.ID)) (out += p)
 
-    def getPlayerByIndex(index: Int): Player = {
-        if (index < players.length) {
-            return players(index)
-        } else {
-            return new Player(Int.MinValue)
-        }
-    }
+    //     return out
+    // }
+
+    // def getPlayerByID(ID: Int): Player = {
+    //     var player: Player = null
+
+    //     for (p <- players; if (p.ID == ID)) {
+    //         player = p
+    //     }
+
+    //     if (player == null) {
+    //         println("GAME STATE UPDATE ERROR")
+    //         return new Player(Int.MinValue)
+    //     } else {
+    //         return player
+    //     }
+    // }
+
+    // def getPlayerIndexByID(playerID: Int): Int = {
+    //     var index: Int = 0
+    //     breakable {
+    //         for (player <- players) {
+    //             if (player.ID == playerID) {
+    //                 break
+    //             } else {
+    //                 index += 1
+    //             }
+    //         }
+    //     }
+
+    //     return index
+    // }
+
+    // def getPlayerByIndex(index: Int): Player = {
+    //     if (index < players.length) {
+    //         return players(index)
+    //     } else {
+    //         return new Player(Int.MinValue)
+    //     }
+    // }
 
     def updateIntersections(): Unit = {
         // Game logic
@@ -85,7 +94,7 @@ class GameState extends Serializable {
     }
 
     def update(playerToUpdate: Player): Unit = {
-        var indexToUpdate = 0
+        var indexToUpdate: Int = 0
 
         breakable {
             for (index <- 0 until players.length) {

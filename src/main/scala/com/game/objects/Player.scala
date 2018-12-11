@@ -11,9 +11,8 @@ import akka.actor.ActorRef
  *  @constructor create a new instance of a Player object by the given player name
  *  @param playerName the name of the Player
  */
-class Player (private var _ID: Int) extends Drawable with Moveable with Shootable with Damageable with Serializable {
+class Player (private val _ID: Int) extends Drawable with Moveable with Shootable with Damageable with Serializable {
 	private val _name: String = "Player"
-	private var _kills: Int = 0
 
 	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
 	val _health: Health = new Health(100)
@@ -82,14 +81,8 @@ class Player (private var _ID: Int) extends Drawable with Moveable with Shootabl
 		drawer.fillOval(gun_x, gun_y, size/2, size/2)
 	}
 
-	def ID_=(newID: Int): Unit = (_ID = newID)
-
 	def ID = _ID
 	def name = _name
-	def kills = _kills
-
-	/** Increments the player's kills. */
-	def incrementKills = { _kills = _kills + 1 }
 
 	override def toString(): String = {
 		val x: Double = position.x
@@ -99,6 +92,4 @@ class Player (private var _ID: Int) extends Drawable with Moveable with Shootabl
 
 		return s"ID: $ID, Position: ($x, $y, $r), health: $h"
 	}
-
-	// def copy(player: Player): Unit = { this = player }
 }

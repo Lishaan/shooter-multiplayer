@@ -1,5 +1,6 @@
 package com.game.objects
 
+import util.control.Breaks._
 import scala.collection.mutable.{ArrayBuffer, Map}
 import scalafx.Includes._
 import scalafx.application.JFXApp
@@ -18,7 +19,6 @@ import akka.pattern.ask
 object Game {
 	val name: String = "Shooter Multiplayer"
 	@volatile var playerID: Int = Int.MaxValue
-	@volatile var playerIndex: Int = Int.MaxValue
 	@volatile var state: GameState = new GameState()
 	@volatile var startGameLoop: Boolean = false
 
@@ -47,8 +47,6 @@ object Game {
 class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: ActorRef) extends JFXApp {
 	private var player = new Player(Game.playerID)
 
-	Game.playerIndex = Game.state.getPlayerIndexByID(Game.playerID)
-
 	clientRef ! Client.UpdateGameState(player)
 
 	stage = new PrimaryStage {
@@ -75,13 +73,8 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 			val canvas: Canvas = new Canvas(Global.gameWidth, Global.gameHeight);
 			val drawer: GraphicsContext = canvas.graphicsContext2D
 
-			var playerIsDead: Boolean = false
-
-			// player = Game.state.getPlayerByIndex(Game.playerIndex)
-
 			val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
-				player.ID = Game.playerID
-				player = Game.state.getPlayerByIndex(Game.playerIndex)
+				player = Game.state.getPlayerByID(Game.playerID)
 
 				if (lastTime > 0) {
 					// Delta time
@@ -94,7 +87,7 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					drawer.fill = Global.color("Background")
 					drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
 					player.draw(drawer)
-					Game.state.playersExcept(player).foreach(player => player.draw(drawer))
+					Game.state.players.foreach(p => p.draw(drawer))
 
 					// Player move
 					if (keys( "Up" )) player.move("Forward")
@@ -110,19 +103,31 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 						keys("Space") = false
 					}
 
-					// println((player.position.r).toString)
+					breakable {
+						for (p <- Game.state.players) {
+							if (p.dead) {
+								Game.ended = true
+								break
+							}
+						}
+					}
 
 					seconds += delta
 				}
 
-				if (Game.ended) println("game ended")
+				if (Game.ended) {
+					println("Game ended")
+					gameLoop.stop
+					drawEndGameScreen(drawer, player.alive)
+				}
+
 				lastTime = timeNow
 				requestRate += 1
 
-				// if (requestRate % 2 == 0) {
-				Game.state.update(player)
-				clientRef ! Client.UpdateGameState(player)
-				// }
+				if (requestRate % 2 == 0) {
+					Game.state.update(player)
+					clientRef ! Client.UpdateGameState(player)
+				}
 				
 				// println("Fps: %.2f".format(1.0/Global.delta))
 			})
@@ -154,7 +159,6 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 					// Quitting
 					case KeyCode.Q => { 
 						if (Game.ended) {
-							gameLoop.stop
 							closeGame
 						}
 					}
@@ -170,28 +174,32 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 	}
 
 	/** Closes/ends the current game by closing the stage. */
-	def closeGame = stage.close
+	def closeGame: Unit = {
+		stage.close
+		system.terminate()
+		sys.exit(0)
+	}
 
 	/** Draws the menu that is displayed when a game ends.
 	*
 	*  @param drawer the graphicsContext of where the menu is drawn
 	*  @param scoreAppended a boolean value that determines whether the score appends to the highscore
 	*/
-	// def drawEndGameScreen(drawer: GraphicsContext, scoreAppended: Boolean): Unit = {
-	// 	val fontSize = 20*Global.gameScale
-	// 	drawer.fill = Global.color("PausedText")
-	// 	drawer.textAlign = scalafx.scene.text.TextAlignment.Center
+	def drawEndGameScreen(drawer: GraphicsContext, win: Boolean): Unit = {
+		val fontSize = 20*Global.gameScale
+		drawer.fill = Global.color("PausedText")
+		drawer.textAlign = scalafx.scene.text.TextAlignment.Center
 
-	// 	drawer.font = new scalafx.scene.text.Font(fontSize)
-	// 	drawer.fillText("You Lose", Global.gameWidth/2, Global.playAreaHeight/2)
+		drawer.font = new scalafx.scene.text.Font(fontSize)
+		drawer.fillText(if (win) "You Win" else "You Lose", Global.gameWidth/2, (Global.gameHeight/2) - (Global.gameWidth/6))
 
-	// 	drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
-	// 	drawer.fillText("Press Q to go back to Main Menu", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize))
+		drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
+		drawer.fillText("Press Q to go back to Main Menu", Global.gameWidth/2, Global.gameHeight/2 + (fontSize))
 
-	// 	drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
-	// 	drawer.fillText("Press R to try again", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize*2))
+		drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
+		drawer.fillText("Press R to try again", Global.gameWidth/2, Global.gameHeight/2 + (fontSize*2))
 
-	// 	drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
-	// 	drawer.fillText(if (scoreAppended) "Your score has been appended to the highscore" else "Your score did not append to the highscore", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize*3))			
-	// }
+		// drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
+		// drawer.fillText(if (scoreAppended) "Your score has been appended to the highscore" else "Your score did not append to the highscore", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize*3))			
+	}
 }
