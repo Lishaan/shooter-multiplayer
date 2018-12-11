@@ -2,6 +2,7 @@ package com.game.objects
 
 import util.control.Breaks._
 import scala.collection.mutable.{ArrayBuffer, Map}
+
 import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
@@ -11,19 +12,20 @@ import scalafx.scene.input.{KeyEvent, KeyCode}
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.animation.AnimationTimer
 
-import com.game.net.{Client, Server}
-
 import akka.actor.{ActorSystem, ActorRef}
-import akka.pattern.ask
+
+import com.game.net.{Client, Server}
+import com.game.App
+import com.game.scenes.MainMenu
+
 
 object Game {
 	val name: String = "Shooter Multiplayer"
 	@volatile var playerID: Int = Int.MaxValue
 	@volatile var state: GameState = new GameState()
-	@volatile var startGameLoop: Boolean = false
 
 	/** Determines whether the current game has ended. */
-	var ended: Boolean = false
+	@volatile var ended: Boolean = false
 
 	/** Checks whether two Moveable entities are intersected.
 	*
@@ -44,12 +46,12 @@ object Game {
  *
  *  @param playerName the name of the current game's player
  */
-class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: ActorRef) extends JFXApp {
+class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: ActorRef) extends PrimaryStage {
 	private var player = new Player(Game.playerID)
 
 	clientRef ! Client.UpdateGameState(player)
 
-	stage = new PrimaryStage {
+	// stage = new PrimaryStage {
 		title = s"${Game.name} - Play"
 		resizable = false
 
@@ -171,13 +173,13 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 			// TODO: Server send client the request
 			gameLoop.start
 		}
-	}
+	// }
 
 	/** Closes/ends the current game by closing the stage. */
 	def closeGame: Unit = {
-		stage.close
+		App.stage.scene = new MainMenu
+		App.stage.title = s"${Game.name} - Main Menu"
 		system.terminate()
-		sys.exit(0)
 	}
 
 	/** Draws the menu that is displayed when a game ends.

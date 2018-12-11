@@ -28,53 +28,6 @@ class GameState extends Serializable {
         }
     }
 
-    // def addPlayer(player: Player): Unit = (players += player)
-
-    // def playersExcept(player: Player): ArrayBuffer[Player] = {
-    //     val out: ArrayBuffer[Player] = ArrayBuffer[Player]()
-    //     for (p <- players; if (p.ID != player.ID)) (out += p)
-
-    //     return out
-    // }
-
-    // def getPlayerByID(ID: Int): Player = {
-    //     var player: Player = null
-
-    //     for (p <- players; if (p.ID == ID)) {
-    //         player = p
-    //     }
-
-    //     if (player == null) {
-    //         println("GAME STATE UPDATE ERROR")
-    //         return new Player(Int.MinValue)
-    //     } else {
-    //         return player
-    //     }
-    // }
-
-    // def getPlayerIndexByID(playerID: Int): Int = {
-    //     var index: Int = 0
-    //     breakable {
-    //         for (player <- players) {
-    //             if (player.ID == playerID) {
-    //                 break
-    //             } else {
-    //                 index += 1
-    //             }
-    //         }
-    //     }
-
-    //     return index
-    // }
-
-    // def getPlayerByIndex(index: Int): Player = {
-    //     if (index < players.length) {
-    //         return players(index)
-    //     } else {
-    //         return new Player(Int.MinValue)
-    //     }
-    // }
-
     def updateIntersections(): Unit = {
         // Game logic
         for (p1 <- players; p2 <- players; if (p1.ID != p2.ID)) {

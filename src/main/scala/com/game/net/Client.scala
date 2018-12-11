@@ -1,17 +1,13 @@
 package com.game.net
 
-import Client._
-// import App.{system}
 import akka.actor.{Actor, ActorRef, ActorSelection}
-import Server._
-//import akka.pattern.ask
 import akka.remote.DisassociatedEvent
-//import akka.util.Timeout
-//import scalafx.application.Platform
 
 import com.game.objects.{Game, GameState, Player}
-
 import com.game.serialization.CustomSerializer
+
+import Client._
+import Server._
 
 object Client {
 	case class ServerInfo(ip: String, port: String)
@@ -38,7 +34,7 @@ class Client extends Actor {
 		}
 
 		case Client.Begin => {
-			context.become(begun)			
+			context.become(begun)	
 		}
 
 		case Client.CGameState(bytes) => {

@@ -2,21 +2,15 @@ package com.game.net
 
 import scala.collection.mutable.ArrayBuffer
 
-import Client._
-import Server._
+import com.typesafe.config.{Config, ConfigFactory}
 import akka.actor.{Actor, ActorRef}
-//import akka.pattern.ask
 import akka.remote.DisassociatedEvent
-//import akka.util.Timeout
-//import scalafx.collections.ObservableHashSet
-
-//import scala.concurrent.ExecutionContext.Implicits._
-//import scala.concurrent.Future
-//import scala.concurrent.duration._
 
 import com.game.objects.{Game, GameState, Player}
-
 import com.game.serialization.CustomSerializer
+
+import Client._
+import Server._
 
 object Server {
     private var currentID: Int = 0
@@ -29,19 +23,56 @@ object Server {
     case class Join(actor: ActorRef)
     case class UpdateGameState(player: Player)
     case object Start
+
+    def getConfig(): Config = {
+        println("Binding to: " + GameService.HOSTNAME)
+        val config = ConfigFactory.parseString(s"""
+        |  akka {
+        |    loglevel = "INFO"
+        |  
+        |    actor {
+        |      provider = "akka.remote.RemoteActorRefProvider"
+        |      serializers {
+        |          java = "akka.serialization.JavaSerializer"
+        |          proto = "akka.remote.serialization.ProtobufSerializer"
+        |          custom = "com.game.serialization.CustomSerializer"
+        |      }
+        |  
+        |      serialization-bindings {
+        |          "com.game.objects.GameState" = custom
+        |      }
+        |    }
+        |  
+        |    remote {
+        |      enabled-transports = ["akka.remote.netty.tcp"]
+        |      netty.tcp {
+        |        hostname = "${GameService.HOSTNAME}"
+        |        port = ${GameService.PORT}            
+        |      }
+        |  
+        |      log-sent-messages = on
+        |      log-received-messages = on
+        |    }
+        |  
+        |  }
+        |  
+        """.stripMargin)
+
+        return config.withFallback(ConfigFactory.load())
+    }
 }
 
 class Server extends Actor {
-    val clients: ArrayBuffer[(ActorRef, Int)] = ArrayBuffer[(ActorRef, Int)]()
+    val clients: ArrayBuffer[(ActorRef, Int)] = ArrayBuffer[(ActorRef, Int)]()//send to app for display in gameroom
     val serializer = new CustomSerializer()
     @volatile var gameState: GameState = new GameState()
     // context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
     override def receive: PartialFunction[Any, Unit] = {
         case Server.Join(actor) => {
+            println("Actor Joined")
             val ID: Int = Server.getID()
             clients += ((actor, ID))
-            // gameState.addPlayer(new Player(ID))
         }
 
         case Server.Start => {
@@ -60,11 +91,6 @@ class Server extends Actor {
 
             context.become(begun)
             gameState.print()
-        }
-
-        case a: Any => {
-            val s = a.toString
-            println(s"Default Server ${s}")
         }
     }
 

@@ -1,10 +1,8 @@
 package com.game.serialization
 
-import akka.actor.{ActorRef, ActorSystem}
-import akka.serialization._
-import com.typesafe.config.ConfigFactory
-
 import java.io.{ByteArrayOutputStream, ObjectOutputStream, ObjectInputStream, ByteArrayInputStream}
+
+import akka.serialization.SerializerWithStringManifest
 
 import com.game.objects.GameState
 

@@ -4,8 +4,6 @@ import scalafx.Includes._
 import scalafx.scene.paint.Color
 import scalafx.scene.canvas.GraphicsContext
 
-import akka.actor.ActorRef
-
 /** A Player object controlled by the user that inherits the traits: [[Drawable]], [[Moveable]] and [[Shootable]].
  *
  *  @constructor create a new instance of a Player object by the given player name
@@ -15,7 +13,7 @@ class Player (private val _ID: Int) extends Drawable with Moveable with Shootabl
 	private val _name: String = "Player"
 
 	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
-	val _health: Health = new Health(100)
+	val _health: Health = new Health(Global.health("Player"))
 	var _size: Double = Global.size("Player")
 	val _color: String = Global.color("Player")
 	var _speed: Double = Global.speed("Player")
