@@ -39,20 +39,17 @@ object App extends JFXApp {
     }
 
     def stopProcesses(): Unit = {
-        // Thread.sleep(1000)
-        try{
+        try {
 		    Await.result(system.terminate, 2 second)
-	    }
-	    catch{
-	    	case e:Exception=> println("caught Exception")
-            case _ : Throwable => println("Random Exception At stopping processes")
+	    } catch {
+	    	case e: Exception => println("Caught Exception")
+            case _: Throwable => println("Random Exception At stopping processes")
 	    }
         
     }
 
     def reconfigure(): Unit = {
         stopProcesses()
-        //println("RECONFIGURE")
         Server.clients = new ObservableHashSet[(ActorRef, Int)]()
         Server.resetID
 
@@ -77,9 +74,10 @@ object App extends JFXApp {
                 headerText = "Max Amount of Player Reached"
                 contentText = message
             }.showAndWait()
+
             App.stage.title = s"${Game.name} - Client Setup"
 			App.stage.scene = new ClientSetup()
-            }
+        }
     }
 
     def showDisconnectedDialog(message: String): Unit ={
@@ -90,6 +88,7 @@ object App extends JFXApp {
                 headerText = "Server has shut down"
                 contentText = message
             }.showAndWait()
+            
             App.stage.title = s"${Game.name} - Main Menu"
 			App.stage.scene = new MainMenu
         }

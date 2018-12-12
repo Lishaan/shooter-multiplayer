@@ -51,137 +51,127 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 	clientRef ! Client.UpdateGameState(player)
 
-	// stage = new PrimaryStage {
-		title = s"${Game.name} - Play"
-		resizable = false
+	title = s"${Game.name} - Play"
+	resizable = false
 
-		scene = new Scene(Global.gameWidth, Global.gameHeight) {
-			Game.ended = false
+	scene = new Scene(Global.gameWidth, Global.gameHeight) {
+		Game.ended = false
 
-			var keys = Map (
-				"Up"     -> false,
-				"Right"  -> false,
-				"Down"   -> false,
-				"Left"   -> false,
-				"Space"  -> false
-			)
+		var keys = Map (
+			"Up"     -> false,
+			"Right"  -> false,
+			"Down"   -> false,
+			"Left"   -> false,
+			"Space"  -> false
+		)
 
-			var lastTime: Long = -3
-			var seconds: Double = 0.0
+		var lastTime: Long = -3
+		var seconds: Double = 0.0
 
-			var requestRate: Int = 0
+		var requestRate: Int = 0
 
-			// Canvas
-			val canvas: Canvas = new Canvas(Global.gameWidth, Global.gameHeight);
-			val drawer: GraphicsContext = canvas.graphicsContext2D
+		// Canvas
+		val canvas: Canvas = new Canvas(Global.gameWidth, Global.gameHeight);
+		val drawer: GraphicsContext = canvas.graphicsContext2D
 
-			val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
-				player = Game.state.getPlayerByID(Game.playerID)
+		val gameLoop: AnimationTimer = AnimationTimer(timeNow => {
+			player = Game.state.getPlayerByID(Game.playerID)
 
-				if (lastTime > 0) {
-					// Delta time
-					val delta = (timeNow-lastTime)/1e9
-					Global.delta = delta
+			if (lastTime > 0) {
+				// Delta time
+				val delta = (timeNow-lastTime)/1e9
+				Global.delta = delta
+				
+				player.updateBullets
+
+				// Drawings
+				drawer.fill = Global.color("Background")
+				drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
+				player.draw(drawer)
+				Game.state.players.foreach(p => p.draw(drawer))
+
+				// Player move
+				if (keys( "Up" )) player.move("Forward")
+				if (keys("Down")) player.move("Backward")
+
+				// Player rotate
+				if (keys("Right")) player.rotateRight
+				if (keys("Left" )) player.rotateLeft
+
+				// player shoot
+				if (keys("Space")) {
+					player.shootBullet
+					keys("Space") = false
+				}
+
+				breakable {
+					for (p <- Game.state.players) {
+						if (p.dead) {
+							Game.ended = true
+							break
+						}
+					}
+				}
+
+				seconds += delta
+			}
+
+			if (Game.ended) {
+				println("Game ended")
+				gameLoop.stop
+				drawEndGameScreen(drawer, player.alive)
+			}
+
+			lastTime = timeNow
+			requestRate += 1
+
+			Game.state.update(player)
+			clientRef ! Client.UpdateGameState(player)
+
+			// println("Fps: %.2f".format(1.0/Global.delta))
+		})
+
+		// Key pressed events
+		onKeyPressed = (e: KeyEvent) => {
+			e.code match {
+				// Movement Controls
+				case KeyCode.Up => keys("Up") = true
+				case KeyCode.Right => keys("Right") = true
+				case KeyCode.Down => keys("Down") = true
+				case KeyCode.Left => keys("Left") = true
 					
-					player.updateBullets
-
-					// Drawings
-					drawer.fill = Global.color("Background")
-					drawer.fillRect(0, 0, Global.gameWidth, Global.gameHeight)
-					player.draw(drawer)
-					Game.state.players.foreach(p => p.draw(drawer))
-
-					// Player move
-					if (keys( "Up" )) player.move("Forward")
-					if (keys("Down")) player.move("Backward")
-
-					// Player rotate
-					if (keys("Right")) player.rotateRight
-					if (keys("Left" )) player.rotateLeft
-
-					// player shoot
-					if (keys("Space")) {
-						player.shootBullet
-						keys("Space") = false
-					}
-
-					breakable {
-						for (p <- Game.state.players) {
-							if (p.dead) {
-								Game.ended = true
-								break
-							}
-						}
-					}
-
-					seconds += delta
-				}
-
-				if (Game.ended) {
-					println("Game ended")
-					gameLoop.stop
-					drawEndGameScreen(drawer, player.alive)
-				}
-
-				lastTime = timeNow
-				requestRate += 1
-
-				//if (requestRate % 2 == 0) {
-				Game.state.update(player)
-				clientRef ! Client.UpdateGameState(player)
-				//}
-				// Server.clients.foreach {
-				// 	case (a, id) => {
-				// 		println(id + ": " + a.toString)
-				// 	}
-				// }
-				// println("Fps: %.2f".format(1.0/Global.delta))
-			})
-
-			// Key pressed events
-			onKeyPressed = (e: KeyEvent) => {
-				e.code match {
-					// Movement Controls
-					case KeyCode.Up => keys("Up") = true
-					case KeyCode.Right => keys("Right") = true
-					case KeyCode.Down => keys("Down") = true
-					case KeyCode.Left => keys("Left") = true
-						
-					case _ => 
-				}
+				case _ => 
 			}
-
-			// Key released events
-			onKeyReleased = (e: KeyEvent) => {
-				e.code match {
-					// Movement Controls
-					case KeyCode.Up => (keys("Up") = false)
-					case KeyCode.Right => (keys("Right") = false)
-					case KeyCode.Down => (keys("Down") = false)
-					case KeyCode.Left => (keys("Left") = false)
-
-					case KeyCode.Space => (keys("Space") = true)
-
-					// Quitting
-					case KeyCode.Q => { 
-						if (Game.ended) {
-							closeGame
-						}
-					}
-
-					case _ =>
-				}
-			}
-
-			content = List(canvas)
-			// TODO: Server send client the request
-			gameLoop.start
 		}
-	// }
+
+		// Key released events
+		onKeyReleased = (e: KeyEvent) => {
+			e.code match {
+				// Movement Controls
+				case KeyCode.Up => (keys("Up") = false)
+				case KeyCode.Right => (keys("Right") = false)
+				case KeyCode.Down => (keys("Down") = false)
+				case KeyCode.Left => (keys("Left") = false)
+
+				case KeyCode.Space => (keys("Space") = true)
+
+				// Quitting
+				case KeyCode.Q => { 
+					if (Game.ended) {
+						closeGame
+					}
+				}
+
+				case _ =>
+			}
+		}
+
+		content = List(canvas)
+		gameLoop.start
+	}
 
 	/** Closes/ends the current game by closing the stage. */
 	def closeGame: Unit = {
-		// App.reconfigure()
 		App.stage.title = s"${Game.name} - Main Menu"
 		App.stage.scene = new MainMenu
 	}

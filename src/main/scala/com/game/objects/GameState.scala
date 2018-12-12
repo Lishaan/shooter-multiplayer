@@ -54,6 +54,7 @@ class GameState extends Serializable {
                     bullet.remove
                 }
             })
+            
             p2.bullets.foreach(bullet => {
                 if (Game.intersected(p1, bullet)) {
                     p1.inflictDamage(bullet.damage)

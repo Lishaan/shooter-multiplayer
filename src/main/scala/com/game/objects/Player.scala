@@ -45,13 +45,6 @@ class Player (private val _ID: Int) extends Drawable with Moveable with Shootabl
 		speed = Global.speed("Player")
 		size = Global.size("Player")
 
-		// TODO: Bounds
-		// val outOfBounds: Boolean = (
-		// 	((position.x+size < Global.gameWidth) && (position.y+size < Global.gameHeight))
-		// 	||
-		// 	((position.y-size > 0) && (position.x-size > 0))
-		// )
-		
 		val nextPosition: Position = Position(position.x, position.y, position.r)
 
 		direction match {

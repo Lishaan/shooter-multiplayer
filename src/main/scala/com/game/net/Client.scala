@@ -17,7 +17,7 @@ import Server._
 object Client {
 	case class ServerInfo(ip: String, port: String)
 	case class StartJoin(server: String, port: String)
-	case class CGameState(bytes:Array[Byte])
+	case class CGameState(bytes: Array[Byte])
 	case class PlayerInfo(id: Int)
 	case object Begin
 	case class UpdateGameState(player: Player)
@@ -42,20 +42,13 @@ class Client extends Actor {
 			val serverRef = context.actorSelection(serverSelection(serverInfo))
 			serverRef ! Server.Join(self)
 		}
-
-		// case Client.PlayerInfo(id) => {
-		// 	playerID = id
-		// 	Game.playerID = id
-		// }
-		
 	}
 
 
-	def joined:Receive={
+	def joined: Receive = {
 		case Client.PlayerInfo(id) => {
 			playerID = id
 			Game.playerID = id
-		
 		}
 
 		case Client.Begin => {
@@ -67,9 +60,7 @@ class Client extends Actor {
 		
 		case Client.UpdateNameList(serverNameList) => {
 			App.nameList.clear()
-			serverNameList.foreach(elem => {
-				App.nameList += elem
-			})
+			serverNameList.foreach(elem => App.nameList += elem)
 		}
 
 		case Client.ClientLeftRoom => {
@@ -87,11 +78,13 @@ class Client extends Actor {
 			App.showServerFullDialog("Please connect to another server")
 		}
 
-		case DisassociatedEvent(local, remote, _) =>{
-  	   		App.showDisconnectedDialog(s"$remote has been disconnected, re-directing to main menu")
+		case DisassociatedEvent(local, remote, inbound) =>{
+			if (!inbound) {
+  	 	  		App.showDisconnectedDialog(s"$remote has been disconnected, re-directing to main menu")
+			}
 		}
 
-		case _ => println()
+		case _ =>
 	}
 	def begun: Receive = {
 		case Client.UpdateGameState(player) => {
@@ -104,10 +97,7 @@ class Client extends Actor {
 			val value: AnyRef = serializer.fromBinary(bytes, classOf[GameState].getName)
 			Game.state = value.asInstanceOf[GameState]
 		}
-		
-		// case DisassociatedEvent(local, remote, _) =>
-     	// 	App.showErrorDialog(s"$remote has been disconnected, re-direct to main menu")
 
-		case _ => println("")
+		case _ =>
 	}
 }

@@ -31,7 +31,6 @@ object GameRoom {
 }
 
 class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gameWidth, Global.gameHeight) {
-
 	fill = Scenes.color("Background")
 
 	val back = new Button("«") {
@@ -86,9 +85,7 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 		layoutX = Global.gameWidth/2 - (150/2)
 		layoutY = 320+pushY+6
 		style = Scenes.buttonStyle("Smaller")
-		//if ((!isServer) || (App.nameList.length  2)) {
-			disable = true
-		//}
+		disable = true
 
 		onAction = (e: ActionEvent) => {
             if (isServer) {
@@ -100,9 +97,6 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 	}
 
 	GameRoom.startGameButtonDisabled.onChange((observable, oldValue, newValue) => {
-		// println("IS: " + isServer)
-		// println("O: " + oldValue)
-		// println("N: " + newValue)
 		if (!isServer) {
 			this.startGameButton.disable = false
 			Platform.runLater {

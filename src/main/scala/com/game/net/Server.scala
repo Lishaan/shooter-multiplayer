@@ -10,7 +10,6 @@ import com.game.App
 import com.game.objects.{Game, GameState, Player}
 import com.game.serialization.CustomSerializer
 
-
 import Client._
 import Server._
 
@@ -82,7 +81,7 @@ class Server extends Actor {
     override def receive: PartialFunction[Any, Unit] = {
         case Server.Join(actor) => {
             val ID: Int = Server.getID()
-            if (Server.clients.size >= 2){
+            if (Server.clients.size >= 2) {
                 sender ! Client.ServerFull
             } else {
                 Server.clients += ((actor, ID))
@@ -113,10 +112,7 @@ class Server extends Actor {
                 App.nameList.remove(1)
         }
      
-        // case DisassociatedEvent(local, remote, _) =>
-     	// 	App.showErrorDialog(s"$remote has been disconnected, re-direct to main menu")
-    
-        case _ => println("Default Server")
+        case _ => 
     }
 
     def begun: Receive = {
@@ -130,11 +126,9 @@ class Server extends Actor {
                 }
             }
 
-            // gameState.print()
+            gameState.print()
         }
-        // case DisassociatedEvent(local, remote, _) =>
-     	// 	App.showErrorDialog(s"$remote has been disconnected, re-direct to main menu")
 
-        case _ => println("Begun Server")
+        case _ =>
     }
 }

@@ -15,7 +15,7 @@ class MainMenu (_width: Double, _height: Double) extends Scene (_width, _height)
 
 	def this() = this(Global.gameWidth, Global.gameHeight)
 	
-	if(!App.firstLoad){
+	if(!App.firstLoad) {
 		App.reconfigure()
 	}
 	App.firstLoad = false
