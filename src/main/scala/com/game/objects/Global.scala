@@ -2,6 +2,7 @@ package com.game.objects
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.immutable.Map
+
 import scalafx.Includes._
 import scalafx.scene.paint.Color
 

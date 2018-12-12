@@ -33,6 +33,7 @@ class Client extends Actor {
 	private val serverSelection: (ServerInfo) => String = (si: ServerInfo) => s"akka.tcp://shooter@${si.ip}:${si.port}/user/server"
 	private val serializer = new CustomSerializer()
 	private var playerID: Int = Int.MaxValue
+	
 	context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
 	override def receive: PartialFunction[Any, Unit] = {

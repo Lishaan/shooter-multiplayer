@@ -1,6 +1,7 @@
 package com.game.scenes
 
 import scala.collection.immutable.Map
+
 import scalafx.scene.paint.Color
 
 object Scenes {

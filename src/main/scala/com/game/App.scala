@@ -1,21 +1,21 @@
 package com.game
 
-import akka.actor.{ActorSystem, Props, Terminated, ActorRef}
-import scalafx.application.Platform
-import scalafx.scene.control.Alert
-import scalafx.scene.control.Alert.AlertType
-import scalafx.Includes._
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.collections.{ObservableBuffer, ObservableHashSet}
-import scalafx.scene.Scene
-
-import scalafx.beans.property.PropertyIncludes._
-import scalafx.beans.property.BooleanProperty
-
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import scalafx.Includes._
+import scalafx.application.Platform
+import scalafx.application.JFXApp
+import scalafx.application.JFXApp.PrimaryStage
+import scalafx.collections.{ObservableBuffer, ObservableHashSet}
+import scalafx.scene.control.Alert
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.Scene
+import scalafx.beans.property.PropertyIncludes._
+import scalafx.beans.property.BooleanProperty
+
+import akka.actor.{ActorSystem, Props, Terminated, ActorRef}
 
 import com.game.net.{Client, Server}
 import com.game.objects.{Game, GameState}
@@ -88,7 +88,7 @@ object App extends JFXApp {
                 headerText = "Server has shut down"
                 contentText = message
             }.showAndWait()
-            
+
             App.stage.title = s"${Game.name} - Main Menu"
 			App.stage.scene = new MainMenu
         }

@@ -1,22 +1,23 @@
 package com.game.scenes
 
 import scalafx.Includes._
-import scalafx.scene.{Node, Scene}
-import scalafx.scene.control.{Label, TextField, Button, ListView}
-import scalafx.event.ActionEvent
-import scalafx.scene.input.MouseEvent
-import scalafx.scene.paint.Color
 import scalafx.application.Platform
 import scalafx.beans.property.PropertyIncludes._
 import scalafx.beans.property.BooleanProperty
-
-import com.game.objects.{Game, Global}
-import com.game.net.{Client, Server, GameService}
-import com.game.net.Server._
-import com.game.net.Client._
+import scalafx.scene.{Node, Scene}
+import scalafx.scene.control.{Label, TextField, Button, ListView}
+import scalafx.scene.input.MouseEvent
+import scalafx.scene.paint.Color
+import scalafx.event.ActionEvent
 
 import akka.actor.{ActorRef, ActorSystem, Props}
+
 import com.game.App
+import com.game.objects.{Game, Global}
+import com.game.net.{Client, Server, GameService}
+
+import com.game.net.Server._
+import com.game.net.Client._
 
 object GameRoom {
 	var startGameButtonDisabled: BooleanProperty = new BooleanProperty(GameRoom, "startGameButtonDisabled", true)
@@ -112,6 +113,8 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 		)
 		if ((isServer) && (App.nameList.length == 2)) {
 			startGameButton.disable = false
+		} else {
+			startGameButton.disable = true
 		}
 
 	})

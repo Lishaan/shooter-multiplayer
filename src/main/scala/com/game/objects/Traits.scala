@@ -1,6 +1,7 @@
 package com.game.objects
 
 import scala.collection.mutable.ArrayBuffer
+
 import scalafx.Includes._
 import scalafx.scene.paint.Color
 import scalafx.scene.canvas.GraphicsContext

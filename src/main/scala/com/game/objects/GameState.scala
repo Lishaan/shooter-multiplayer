@@ -1,11 +1,12 @@
 package com.game.objects
 
-import java.io.{ObjectInputStream, ByteArrayInputStream}
-
 import util.control.Breaks._
+
 import scala.collection.mutable.ArrayBuffer
+
 import scalafx.scene.paint.Color
 
+import java.io.{ObjectInputStream, ByteArrayInputStream}
 
 object GameState {
     def parseFrom(bytes: Array[Byte]): GameState = {
@@ -54,7 +55,7 @@ class GameState extends Serializable {
                     bullet.remove
                 }
             })
-            
+
             p2.bullets.foreach(bullet => {
                 if (Game.intersected(p1, bullet)) {
                     p1.inflictDamage(bullet.damage)

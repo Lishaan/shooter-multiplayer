@@ -3,6 +3,7 @@ package com.game.net
 import scalafx.collections.{ObservableHashSet, ObservableBuffer}
 
 import com.typesafe.config.{Config, ConfigFactory}
+
 import akka.actor.{Actor, ActorRef}
 import akka.remote.DisassociatedEvent
 
@@ -20,6 +21,7 @@ object Server {
     def resetID:Unit = {
         currentID = 0
     }
+
     def getID(): Int = {
         currentID += 1
         
@@ -92,11 +94,14 @@ class Server extends Actor {
         }
 
         case Server.Start => {
+            var count = 0
             Server.clients.foreach {
                 case (clientRef, playerID) => {
+                    count += 1
                     clientRef ! Client.Begin
                 }
             }
+            println("UEGKJGWKVGHE: " + count)
             context.become(begun)
         }
 
@@ -126,7 +131,7 @@ class Server extends Actor {
                 }
             }
 
-            gameState.print()
+            // gameState.print()
         }
 
         case _ =>

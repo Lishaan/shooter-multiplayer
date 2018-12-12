@@ -3,9 +3,9 @@ package com.game.scenes
 import scalafx.Includes._
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Label, TextField, Button, Slider}
-import scalafx.event.ActionEvent
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
+import scalafx.event.ActionEvent
 
 import com.game.objects.{Game, Global}
 import com.game.App
