@@ -46,7 +46,6 @@ object Game {
  *  @param playerName the name of the current game's player
  */
 class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: ActorRef) extends PrimaryStage {
-	println("GAME INSTANCE")
 	private var player = new Player(Game.playerID)
 
 	clientRef ! Client.UpdateGameState(player)

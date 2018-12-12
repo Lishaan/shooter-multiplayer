@@ -64,6 +64,7 @@ object App extends JFXApp {
 
         GameRoom.nameList.items = new ObservableBuffer[String]()
         GameRoom.startGameButtonDisabled = new BooleanProperty(GameRoom, "startGameButtonDisabled", true)
+        GameRoom.enteredGameRoomCount = 0
     }
 
     def showServerFullDialog(message: String): Unit ={

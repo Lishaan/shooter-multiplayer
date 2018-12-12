@@ -21,6 +21,7 @@ import com.game.net.Client._
 
 object GameRoom {
 	var startGameButtonDisabled: BooleanProperty = new BooleanProperty(GameRoom, "startGameButtonDisabled", true)
+	var enteredGameRoomCount: Int = 0
 
 	var nameList: ListView[String] = new ListView[String](List()) {
         layoutX = Global.gameWidth/2 - (400/2)
@@ -100,8 +101,12 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 	GameRoom.startGameButtonDisabled.onChange((observable, oldValue, newValue) => {
 		if (!isServer) {
 			this.startGameButton.disable = false
-			Platform.runLater {
-				App.runGame()
+			GameRoom.enteredGameRoomCount += 1
+
+			if (GameRoom.enteredGameRoomCount <= 1) {
+				Platform.runLater {
+					App.runGame()
+				}
 			}
 		}
 	})

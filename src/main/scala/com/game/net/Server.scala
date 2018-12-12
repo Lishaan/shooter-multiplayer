@@ -94,14 +94,11 @@ class Server extends Actor {
         }
 
         case Server.Start => {
-            var count = 0
             Server.clients.foreach {
                 case (clientRef, playerID) => {
-                    count += 1
                     clientRef ! Client.Begin
                 }
             }
-            println("UEGKJGWKVGHE: " + count)
             context.become(begun)
         }
 
