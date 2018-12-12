@@ -4,5 +4,5 @@ import java.net.InetAddress
 
 object GameService {
     val HOSTNAME: String = InetAddress.getLocalHost.getHostAddress
-    val PORT: String = "55555"
+    val PORT: String = "55556"
 }

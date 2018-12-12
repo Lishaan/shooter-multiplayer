@@ -119,6 +119,7 @@ object Global {
 		"TimerText"     -> "FBFBFB",
 		"PausedText"    -> "FBFBFB",
 		"Player"        -> "FBFBFB",
+		"Player-alt"    -> "6F997A",
 		"Bullet"        -> "44f9ff",
 		"Pellet"        -> "44f9ff"
 		/* Link: https://coolors.co/0c0910-cdd1c4-5c80bc-6b2737-1d7874 */

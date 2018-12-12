@@ -7,12 +7,28 @@ import scalafx.event.ActionEvent
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 import scalafx.application.Platform
+import scalafx.beans.property.PropertyIncludes._
+import scalafx.beans.property.BooleanProperty
 
 import com.game.objects.{Game, Global}
 import com.game.net.{Client, Server, GameService}
+import com.game.net.Server._
+import com.game.net.Client._
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import com.game.App
+
+object GameRoom {
+	var startGameButtonDisabled: BooleanProperty = new BooleanProperty(GameRoom, "startGameButtonDisabled", true)
+
+	var nameList: ListView[String] = new ListView[String](List()) {
+        layoutX = Global.gameWidth/2 - (400/2)
+		layoutY = 200
+        maxHeight = 100
+		minWidth = 400
+        opacity = 1
+    }
+}
 
 class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gameWidth, Global.gameHeight) {
 
@@ -27,13 +43,19 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 		onMouseExited = (e: MouseEvent) => style = Scenes.buttonStyle("onExited")
 
 		onAction = (e: ActionEvent) => {
+   
+			App.nameList.clear() 
             if (isServer) {
-                App.stage.title = s"${Game.name} - Main Menu"
-                App.stage.scene = new MainMenu
+				App.serverRef ! Server.ServerLeftRoom
+				App.stage.title = s"${Game.name} - Main Menu"
+				App.stage.scene = new MainMenu
             } else {
-                App.stage.title = s"${Game.name} - Client Setup"
-                App.stage.scene = new ClientSetup
+				App.clientRef ! Client.ClientLeftRoom
+				App.stage.title = s"${Game.name} - Client Setup"
+				App.stage.scene = new ClientSetup()
+
             }
+
 		}
 	}
 
@@ -59,19 +81,14 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 	}
 	hosting_label.setTextFill(Color.web("#44f9ff"))
 
-    val nameList: ListView[String] = new ListView[String](Array("David", "Lishan")) {
-        layoutX = Global.gameWidth/2 - (250/2) - 5
-		layoutY = 200
-        maxHeight = (200/7) * 2
-        disable = true
-        opacity = 1
-    }
-
 	val startGameButton = new Button("Start Game") {
 		prefWidth = 150
 		layoutX = Global.gameWidth/2 - (150/2)
 		layoutY = 320+pushY+6
 		style = Scenes.buttonStyle("Smaller")
+		//if ((!isServer) || (App.nameList.length  2)) {
+			disable = true
+		//}
 
 		onAction = (e: ActionEvent) => {
             if (isServer) {
@@ -82,13 +99,35 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
         }
 	}
 
+	GameRoom.startGameButtonDisabled.onChange((observable, oldValue, newValue) => {
+		// println("IS: " + isServer)
+		// println("O: " + oldValue)
+		// println("N: " + newValue)
+		if (!isServer) {
+			this.startGameButton.disable = false
+			Platform.runLater {
+				App.runGame()
+			}
+		}
+	})
+
+    App.nameList.onChange((a, b) => {		
+		Platform.runLater(
+
+			GameRoom.nameList.items = App.getNameList()
+		)
+		if ((isServer) && (App.nameList.length == 2)) {
+			startGameButton.disable = false
+		}
+
+	})
 	content = List(
         back, headerText, 
-        nameList,
-        startGameButton
+        GameRoom.nameList
     )
 
     if (isServer) {
         content += hosting_label
+        content += startGameButton
     }
 }

@@ -15,9 +15,24 @@ class Player (private val _ID: Int) extends Drawable with Moveable with Shootabl
 	val _position: Position = new Position(Global.gameWidth/2, Global.gameHeight/2, 0)
 	val _health: Health = new Health(Global.health("Player"))
 	var _size: Double = Global.size("Player")
-	val _color: String = Global.color("Player")
+	var _color: String = Global.color("Player")
 	var _speed: Double = Global.speed("Player")
     var _rotationSpeed: Double = 4
+
+	ID match {
+		case 1 => {
+			position.x = size * 2
+			position.y = size * 2
+	        position.r = 0.5
+		}
+
+		case 2 | _ => {
+			position.x = Global.gameWidth - (size * 2)
+			position.y = Global.gameHeight - (size * 2)
+			position.r = -2.5
+			color = Global.color("Player-alt")
+		}
+	}
 
 	def shootBullet: Unit = (_bullets +:= new Bullet(this.position))
 
@@ -36,16 +51,28 @@ class Player (private val _ID: Int) extends Drawable with Moveable with Shootabl
 		// 	||
 		// 	((position.y-size > 0) && (position.x-size > 0))
 		// )
-
-		// println(outOfBounds)
-
-		// // Normalized Angle from -90 to 90
-		// val na: Double = (Math.sin(position.r) * 90)
+		
+		val nextPosition: Position = Position(position.x, position.y, position.r)
 
 		direction match {
-			case "Forward"  => position.moveForward(speed)
-			case "Backward" => position.moveBackward(speed)
+			case "Forward"  => nextPosition.moveForward(speed)
+			case "Backward" => nextPosition.moveBackward(speed)
 			case _ =>
+		}
+
+		val outOfBounds: Boolean = !(
+			(nextPosition.x+size < Global.gameWidth) && 
+			(nextPosition.y+size < Global.gameHeight) &&
+			(nextPosition.x-size > 0) &&
+			(nextPosition.y-size > 0) 
+		)
+
+		if (!outOfBounds) {
+			direction match {
+				case "Forward"  => position.moveForward(speed)
+				case "Backward" => position.moveBackward(speed)
+				case _ =>
+			}
 		}
 	}
 

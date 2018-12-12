@@ -41,7 +41,7 @@ class About (_width: Double, _height: Double) extends Scene (_width, _height) {
 	}
 	headerText.setTextFill(Color.web("#44f9ff"))
 
-	val aboutGameStr = s"${Game.name} is an endless 2D shooter game in which the\nplayer has to survive by killing enemies until the\nplayer is killed by an enemy.\nThe score is then determined by the time surpassed in seconds."
+	val aboutGameStr = s"${Game.name} is a 1v1 2D online shooter game where two \nplayers battle against each other to death."
 
 	val aboutGame = new Label(aboutGameStr) {
 		prefWidth = 250 + (250/2)
@@ -59,12 +59,12 @@ class About (_width: Double, _height: Double) extends Scene (_width, _height) {
 	}
 	controlsText.setTextFill(Color.web("#44f9ff"))
 
-	val controlsStr = "Arrow Keys: Move around the play area\nSpace bar or Z key: Shoot bullets\nEsc: Pause Game" 
+	val controlsStr = "Up and Down Arrow Keys: Move forward and backward\nLeft and Right Arrow Keys: Rotate the player\nSpace bar or Z key: Shoot bullets\nEsc: Pause Game" 
 
 	val controls = new Label(controlsStr) {
 		prefWidth = 250 + (250/3)
 		style = "-fx-font: 12 Regular; -fx-text-alignment: center;"
-		layoutX = Global.gameWidth/2 - (250/2) + 13
+		layoutX = Global.gameWidth/2 - ((250 + (250/3))/2) + 10
 		layoutY = 320+pullY
 	}
 	controls.setTextFill(Color.web("#00BCC5"))

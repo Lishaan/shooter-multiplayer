@@ -1,10 +1,11 @@
 package com.game.objects
 
-import scala.collection.mutable.ArrayBuffer
-
 import java.io.{ObjectInputStream, ByteArrayInputStream}
 
 import util.control.Breaks._
+import scala.collection.mutable.ArrayBuffer
+import scalafx.scene.paint.Color
+
 
 object GameState {
     def parseFrom(bytes: Array[Byte]): GameState = {
@@ -17,15 +18,31 @@ object GameState {
 }
 
 class GameState extends Serializable {
-    private var _players: Array[Player] = Array[Player](new Player(1), new Player(2))
+    private var _players: Array[Player] = initializePlayers()
 
     def getPlayerByID(id: Int): Player = {
         id match {
             case 1 => return players(0)
             case 2 => return players(1)
 
-            case _ => return new Player(-1)
+            case _ => return players(0)
         }
+    }
+
+    def initializePlayers(): Array[Player] = {
+        val player1: Player = new Player(1)
+        val player2: Player = new Player(2)
+
+        player1.position.x = player1.size * 2
+        player1.position.y = player1.size * 2
+        player1.position.r = 0.5
+
+        player2.position.x = Global.gameWidth - (player2.size * 2)
+        player2.position.y = Global.gameHeight - (player2.size * 2)
+        player2.position.r = -2.5
+        player2.color = Global.color("Player-alt")
+
+        return Array[Player](player1, player2)
     }
 
     def updateIntersections(): Unit = {

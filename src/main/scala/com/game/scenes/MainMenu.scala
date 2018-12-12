@@ -14,7 +14,11 @@ import com.game.App
 class MainMenu (_width: Double, _height: Double) extends Scene (_width, _height) {
 
 	def this() = this(Global.gameWidth, Global.gameHeight)
-
+	
+	if(!App.firstLoad){
+		App.reconfigure()
+	}
+	App.firstLoad = false
 	fill = Scenes.color("Background")
 
 	val centerLayoutY = Global.gameHeight/2
@@ -55,10 +59,11 @@ class MainMenu (_width: Double, _height: Double) extends Scene (_width, _height)
 		onMouseExited = (e: MouseEvent) => style = Scenes.buttonStyle("onExited")
 		onAction = (e: ActionEvent) => {
 			style = Scenes.buttonStyle("onAction")
-			App.clientRef ! Client.StartJoin(GameService.HOSTNAME, GameService.PORT)
 
 			App.stage.title = s"${Game.name} - Game Room"
 			App.stage.scene = new GameRoom(true)
+			
+			App.clientRef ! Client.StartJoin(GameService.HOSTNAME, GameService.PORT)
 		}
 	}
 

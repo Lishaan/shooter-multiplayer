@@ -1,6 +1,7 @@
 package com.game.scenes
 
 import scalafx.Includes._
+
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Label, TextField, Button}
 import scalafx.event.ActionEvent
@@ -82,12 +83,11 @@ class ClientSetup (_width: Double, _height: Double) extends Scene (_width, _heig
 			val ip = ip_textField.getText
 			val port = port_textField.getText
 
-            println(ip + ":" + port)
             App.clientRef ! Client.StartJoin(ip, port)
 			App.stage.scene = new GameRoom()
-			// App.stage.title = s"${Game.name} - Main Menu"
 		}
 	}
+
 
 	content = List(
         back, headerText, 

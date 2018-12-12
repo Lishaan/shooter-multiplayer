@@ -8,7 +8,7 @@ class Pellet extends Drawable with Moveable {
 	var _size: Double = Global.size("Pellet")
 	var _speed: Double = ???
     var _rotationSpeed: Double = ???
-    val _color: String = Global.color("Pellet")
+    var _color: String = Global.color("Pellet")
     def move: Unit = ???
 
     def draw(drawer: GraphicsContext): Unit = {

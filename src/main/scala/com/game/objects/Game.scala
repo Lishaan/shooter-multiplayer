@@ -23,7 +23,7 @@ object Game {
 	val name: String = "Shooter Multiplayer"
 	@volatile var playerID: Int = Int.MaxValue
 	@volatile var state: GameState = new GameState()
-
+	
 	/** Determines whether the current game has ended. */
 	@volatile var ended: Boolean = false
 
@@ -126,11 +126,15 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 				lastTime = timeNow
 				requestRate += 1
 
-				if (requestRate % 2 == 0) {
-					Game.state.update(player)
-					clientRef ! Client.UpdateGameState(player)
-				}
-				
+				//if (requestRate % 2 == 0) {
+				Game.state.update(player)
+				clientRef ! Client.UpdateGameState(player)
+				//}
+				// Server.clients.foreach {
+				// 	case (a, id) => {
+				// 		println(id + ": " + a.toString)
+				// 	}
+				// }
 				// println("Fps: %.2f".format(1.0/Global.delta))
 			})
 
@@ -177,9 +181,9 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 	/** Closes/ends the current game by closing the stage. */
 	def closeGame: Unit = {
-		App.stage.scene = new MainMenu
+		// App.reconfigure()
 		App.stage.title = s"${Game.name} - Main Menu"
-		system.terminate()
+		App.stage.scene = new MainMenu
 	}
 
 	/** Draws the menu that is displayed when a game ends.
@@ -197,11 +201,5 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 
 		drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
 		drawer.fillText("Press Q to go back to Main Menu", Global.gameWidth/2, Global.gameHeight/2 + (fontSize))
-
-		drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
-		drawer.fillText("Press R to try again", Global.gameWidth/2, Global.gameHeight/2 + (fontSize*2))
-
-		// drawer.font = new scalafx.scene.text.Font(fontSize*0.50)
-		// drawer.fillText(if (scoreAppended) "Your score has been appended to the highscore" else "Your score did not append to the highscore", Global.gameWidth/2, Global.playAreaHeight/2 + (fontSize*3))			
 	}
 }

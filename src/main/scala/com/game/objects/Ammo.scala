@@ -22,7 +22,7 @@ class Bullet (playerPos: Position) extends Ammo with Serializable {
 	var _speed: Double = Global.speed("Bullet")
     var _rotationSpeed: Double = 0
 	var _size: Double  = Global.size("Bullet")
-	val _color: String = Global.color("Bullet")
+	var _color: String = Global.color("Bullet")
 
 	def move = { 
 		speed = Global.speed("Bullet")

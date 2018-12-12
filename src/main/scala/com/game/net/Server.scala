@@ -1,28 +1,39 @@
 package com.game.net
 
-import scala.collection.mutable.ArrayBuffer
+import scalafx.collections.{ObservableHashSet, ObservableBuffer}
 
 import com.typesafe.config.{Config, ConfigFactory}
 import akka.actor.{Actor, ActorRef}
 import akka.remote.DisassociatedEvent
 
+import com.game.App
 import com.game.objects.{Game, GameState, Player}
 import com.game.serialization.CustomSerializer
+
 
 import Client._
 import Server._
 
 object Server {
     private var currentID: Int = 0
-
+    var clients = new ObservableHashSet[(ActorRef, Int)]()
+    
+    def resetID:Unit = {
+        currentID = 0
+    }
     def getID(): Int = {
         currentID += 1
+        
+        if (currentID > 2) (currentID = 2)
+        
         return currentID
     }
 
     case class Join(actor: ActorRef)
     case class UpdateGameState(player: Player)
     case object Start
+    case object ServerLeftRoom
+    case class ClientLeftRoom(actorRef:ActorRef,id: Int)
 
     def getConfig(): Config = {
         println("Binding to: " + GameService.HOSTNAME)
@@ -63,35 +74,49 @@ object Server {
 }
 
 class Server extends Actor {
-    val clients: ArrayBuffer[(ActorRef, Int)] = ArrayBuffer[(ActorRef, Int)]()//send to app for display in gameroom
-    val serializer = new CustomSerializer()
     @volatile var gameState: GameState = new GameState()
-    // context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
+    val serializer = new CustomSerializer()
+   
+    context.system.eventStream.subscribe(self, classOf[akka.remote.DisassociatedEvent])
 
     override def receive: PartialFunction[Any, Unit] = {
         case Server.Join(actor) => {
-            println("Actor Joined")
             val ID: Int = Server.getID()
-            clients += ((actor, ID))
+            if (Server.clients.size >= 2){
+                sender ! Client.ServerFull
+            } else {
+                Server.clients += ((actor, ID))
+                App.nameList += actor.toString
+                actor ! Client.UpdateNameList(App.nameList.toList)
+                sender ! Client.PlayerInfo(ID)
+            }
         }
 
         case Server.Start => {
-            clients.foreach {
-                case (clientRef, playerID) => {
-                    clientRef ! Client.CGameState(serializer.toBinary(gameState))
-                    clientRef ! Client.PlayerInfo(playerID)
-                }
-            }
-
-            clients.foreach {
+            Server.clients.foreach {
                 case (clientRef, playerID) => {
                     clientRef ! Client.Begin
                 }
             }
-
             context.become(begun)
-            gameState.print()
         }
+
+        case Server.ServerLeftRoom => {
+            if (Server.clients.toList.length-1 > 0) {
+                Server.clients.toList(1)._1 ! Client.ServerLeftRoom
+            }
+        }
+
+        case Server.ClientLeftRoom(remoteClientRef,clientID) => {
+                val t = (remoteClientRef,clientID)
+                Server.clients -= t 
+                App.nameList.remove(1)
+        }
+     
+        // case DisassociatedEvent(local, remote, _) =>
+     	// 	App.showErrorDialog(s"$remote has been disconnected, re-direct to main menu")
+    
+        case _ => println("Default Server")
     }
 
     def begun: Receive = {
@@ -99,14 +124,16 @@ class Server extends Actor {
             gameState.update(player)
             gameState.updateIntersections()
 
-            clients.foreach {
+            Server.clients.foreach {
                 case (clientRef, _) => {
                     clientRef ! Client.CGameState(serializer.toBinary(gameState))
                 }
             }
 
-            gameState.print()
+            // gameState.print()
         }
+        // case DisassociatedEvent(local, remote, _) =>
+     	// 	App.showErrorDialog(s"$remote has been disconnected, re-direct to main menu")
 
         case _ => println("Begun Server")
     }
