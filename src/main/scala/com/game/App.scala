@@ -19,7 +19,7 @@ import akka.actor.{ActorSystem, Props, Terminated, ActorRef}
 
 import com.game.net.{Client, Server}
 import com.game.objects.{Game, GameState}
-import com.game.scenes.{MainMenu, GameRoom, ClientSetup}
+import com.game.scenes.{MainMenu, GameRoom, JoinGame}
 
 object App extends JFXApp {
     var nameList = new ObservableBuffer[String]()
@@ -77,7 +77,7 @@ object App extends JFXApp {
             }.showAndWait()
 
             App.stage.title = s"${Game.name} - Client Setup"
-			App.stage.scene = new ClientSetup()
+			App.stage.scene = new JoinGame()
         }
     }
 
@@ -94,6 +94,7 @@ object App extends JFXApp {
 			App.stage.scene = new MainMenu
         }
     }
+    
     def closeApp(): Unit = {
         stopProcesses()
         stage.close

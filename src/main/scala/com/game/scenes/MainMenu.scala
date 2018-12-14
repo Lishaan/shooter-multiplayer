@@ -32,7 +32,7 @@ class MainMenu (_width: Double, _height: Double) extends Scene (_width, _height)
 	}
 	headerText.setTextFill(Color.web("#44f9ff"))
 
-	val clientButton = new Button("Client") {
+	val clientButton = new Button("Join") {
 		prefWidth = 200
 		prefHeight = 40
 		layoutX = Global.gameWidth/2 - (200/2)
@@ -43,12 +43,12 @@ class MainMenu (_width: Double, _height: Double) extends Scene (_width, _height)
 		onMouseExited = (e: MouseEvent) => style = Scenes.buttonStyle("onExited")
 		onAction = (e: ActionEvent) => {
 			style = Scenes.buttonStyle("onAction")
-			App.stage.title = s"${Game.name} - Client Setup"
-			App.stage.scene = new ClientSetup()
+			App.stage.title = s"${Game.name} - Join Game"
+			App.stage.scene = new JoinGame()
 		}
 	}
 
-	val serverButton = new Button("Server-Client") {
+	val serverButton = new Button("Host") {
 		prefWidth = 200
 		prefHeight = 40
 		layoutX = Global.gameWidth/2 - ((200)/2)

@@ -52,9 +52,8 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 				App.stage.scene = new MainMenu
             } else {
 				App.clientRef ! Client.ClientLeftRoom
-				App.stage.title = s"${Game.name} - Client Setup"
-				App.stage.scene = new ClientSetup()
-
+				App.stage.title = s"${Game.name} - Join Game"
+				App.stage.scene = new JoinGame()
             }
 
 		}
@@ -123,6 +122,7 @@ class GameRoom (private val isServer: Boolean = false) extends Scene (Global.gam
 		}
 
 	})
+
 	content = List(
         back, headerText, 
         GameRoom.nameList

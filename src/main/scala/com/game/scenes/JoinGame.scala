@@ -12,7 +12,7 @@ import com.game.objects.{Game, Global}
 import com.game.net.Client
 import com.game.App
 
-class ClientSetup (_width: Double, _height: Double) extends Scene (_width, _height) {
+class JoinGame (_width: Double, _height: Double) extends Scene (_width, _height) {
 
 	def this() = this(Global.gameWidth, Global.gameHeight)
 
@@ -34,7 +34,7 @@ class ClientSetup (_width: Double, _height: Double) extends Scene (_width, _heig
 
 	val pushY = 100
 
-	val headerText = new Label("Client Setup") {
+	val headerText = new Label("Join Game") {
 		prefWidth = 250
 		style = "-fx-font: 35 Regular"
 		layoutX = Global.gameWidth/2 - (250/2) + 15 + 4

@@ -73,7 +73,7 @@ class Spawner (val enemyName: String, val delayHead: Double, val delayTail: Doub
 	def update: Unit = { counter -= Global.delta }
 }
 
-/** A Global static object that stores all the variables that change in the game every iteration of the game loop. */
+/** A Global static object that stores all the variables that are needed in the game every iteration of the game loop. */
 object Global {
 	val playAreaHeight: Double = Global.gameHeight/1.5
 

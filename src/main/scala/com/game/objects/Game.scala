@@ -152,7 +152,7 @@ class Game(val system: ActorSystem, val serverRef: ActorRef, val clientRef: Acto
 				case KeyCode.Down => (keys("Down") = false)
 				case KeyCode.Left => (keys("Left") = false)
 
-				case KeyCode.Space => (keys("Space") = true)
+				case KeyCode.Space | KeyCode.Z => (keys("Space") = true)
 
 				// Quitting
 				case KeyCode.Q => { 
